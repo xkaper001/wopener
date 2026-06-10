@@ -21,6 +21,7 @@ struct PickerOverlay: View {
     @State private var copyResetTask: Task<Void, Never>?
     @State private var cardWidth: CGFloat = 0
     @AppStorage("showNumberHints") private var showNumberHints = true
+    @AppStorage("urlChipBelow") private var urlChipBelow = false
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -34,8 +35,13 @@ struct PickerOverlay: View {
 
             GlassEffectContainer(spacing: 16) {
                 VStack(spacing: 14) {
-                    urlChip
-                    card
+                    if urlChipBelow {
+                        card
+                        urlChip
+                    } else {
+                        urlChip
+                        card
+                    }
                 }
             }
             .scaleEffect(appeared ? 1 : 0.92)

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GeneralPane: View {
     @AppStorage("showNumberHints") private var showNumberHints = true
+    @AppStorage("urlChipBelow") private var urlChipBelow = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -28,6 +29,24 @@ struct GeneralPane: View {
                 }
                 .toggleStyle(.switch)
                 .controlSize(.small)
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("URL position")
+                        .font(.system(size: 13, weight: .medium))
+                    Picker("URL position", selection: $urlChipBelow) {
+                        Text("Above picker").tag(false)
+                        Text("Below picker").tag(true)
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .controlSize(.small)
+                    Text("Where the link chip sits relative to the browser tiles.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
