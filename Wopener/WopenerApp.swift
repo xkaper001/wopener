@@ -13,6 +13,6 @@ struct WopenerApp: App {
         Window("Wopener", id: "main") {
             MainWindowView()
         }
-        .windowResizability(.contentSize)
+        .windowResizability(.contentMinSize)
     }
 }
