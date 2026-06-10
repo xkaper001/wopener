@@ -8,15 +8,17 @@ import SwiftUI
 struct MainWindowView: View {
     @State private var manager = BrowserManager.shared
     @State private var isDefault = BrowserManager.shared.isDefaultBrowser()
+    @AppStorage("showNumberHints") private var showNumberHints = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             header
             statusSection
             browsersSection
+            settingsSection
         }
         .padding(24)
-        .frame(width: 420, height: 520)
+        .frame(width: 420, height: 600)
         .onAppear { refreshStatus() }
     }
 
@@ -69,11 +71,12 @@ struct MainWindowView: View {
             Text("Browsers")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.secondary)
-            Text("Drag to reorder — order sets the picker's number-key shortcuts.")
+            Text("Drag to reorder — order sets the picker's number-key shortcuts. Toggle off to hide a browser from the picker.")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
             List {
                 ForEach(Array(manager.browsers.enumerated()), id: \.element.id) { index, browser in
+                    let enabled = manager.isEnabled(browser)
                     HStack(spacing: 10) {
                         Text("\(index + 1)")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
@@ -82,9 +85,18 @@ struct MainWindowView: View {
                         Image(nsImage: browser.icon)
                             .resizable()
                             .frame(width: 22, height: 22)
+                            .opacity(enabled ? 1 : 0.4)
                         Text(browser.name)
                             .font(.system(size: 13))
+                            .foregroundStyle(enabled ? .primary : .secondary)
                         Spacer()
+                        Toggle("", isOn: Binding(
+                            get: { manager.isEnabled(browser) },
+                            set: { manager.setEnabled(browser, $0) }
+                        ))
+                        .toggleStyle(.switch)
+                        .controlSize(.small)
+                        .labelsHidden()
                         Image(systemName: "line.3.horizontal")
                             .foregroundStyle(.tertiary)
                     }
@@ -93,6 +105,25 @@ struct MainWindowView: View {
             }
             .listStyle(.inset)
         }
+    }
+
+    private var settingsSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Toggle(isOn: $showNumberHints) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Show number hints")
+                        .font(.system(size: 13, weight: .medium))
+                    Text("Number-key shortcuts (1–9) always work regardless.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .toggleStyle(.switch)
+            .controlSize(.small)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassEffect(.regular, in: .rect(cornerRadius: 18))
     }
 
     private func refreshStatus() {

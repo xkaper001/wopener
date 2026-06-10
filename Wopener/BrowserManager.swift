@@ -21,12 +21,32 @@ final class BrowserManager {
     static let shared = BrowserManager()
 
     private(set) var browsers: [Browser] = []
+    private(set) var disabledIDs: Set<String> = []
     private let store = BrowserOrderStore()
     private let selfBundleID = Bundle.main.bundleIdentifier ?? "dev.xkaper.Wopener"
 
     private static let probeURL = URL(string: "https://example.com")!
 
-    init() { refresh() }
+    init() {
+        disabledIDs = store.disabledIDs()
+        refresh()
+    }
+
+    /// Browsers shown in the picker — ordered, with disabled ones filtered out.
+    var enabledBrowsers: [Browser] {
+        browsers.filter { !disabledIDs.contains($0.id) }
+    }
+
+    func isEnabled(_ browser: Browser) -> Bool {
+        !disabledIDs.contains(browser.id)
+    }
+
+    /// Toggle a browser on/off in the picker. Order is preserved.
+    func setEnabled(_ browser: Browser, _ enabled: Bool) {
+        if enabled { disabledIDs.remove(browser.id) }
+        else { disabledIDs.insert(browser.id) }
+        store.saveDisabled(disabledIDs)
+    }
 
     /// Discover installed http/https handlers, drop Wopener itself, sort A→Z, then
     /// apply the user's saved custom order.

@@ -38,7 +38,7 @@ final class PickerWindowController {
 
         let overlay = PickerOverlay(
             url: url,
-            browsers: BrowserManager.shared.browsers,
+            browsers: BrowserManager.shared.enabledBrowsers,
             onPick: { [weak self] browser in
                 BrowserManager.shared.open(url, in: browser)
                 self?.dismiss()

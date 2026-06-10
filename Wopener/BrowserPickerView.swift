@@ -17,6 +17,10 @@ struct PickerOverlay: View {
     @State private var appeared = false
     @State private var selected = 0
     @State private var copied = false
+    @State private var chipBounce = false
+    @State private var copyResetTask: Task<Void, Never>?
+    @State private var cardWidth: CGFloat = 0
+    @AppStorage("showNumberHints") private var showNumberHints = true
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -60,14 +64,17 @@ struct PickerOverlay: View {
                     .font(.system(size: 12, weight: .medium))
                     .lineLimit(1)
                     .truncationMode(.middle)
+                    .frame(maxWidth: cardWidth > 0 ? cardWidth - 36 : 280)
+                    .fixedSize(horizontal: true, vertical: false)
             }
             .foregroundStyle(.primary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 5)
         }
         .buttonStyle(.plain)
-        .frame(maxWidth: 360)
-        .glassEffect(.regular.interactive(), in: .capsule)
+        .fixedSize(horizontal: true, vertical: false)
+        .glassEffect(.clear.interactive(), in: .capsule)
+        .scaleEffect(chipBounce ? 0.9 : 1)
         .help("Click to copy the link")
     }
 
@@ -82,51 +89,49 @@ struct PickerOverlay: View {
     // MARK: Picker card
 
     private var card: some View {
-        VStack(spacing: 12) {
-            Text("Open link in…")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.secondary)
-
+        Group {
             if browsers.isEmpty {
                 Text("No browsers found")
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 6)
             } else {
-                HStack(spacing: 10) {
+                HStack(spacing: 8) {
                     ForEach(Array(browsers.enumerated()), id: \.element.id) { index, browser in
                         tile(browser, index: index)
                     }
                 }
             }
         }
-        .padding(18)
-        .glassEffect(.regular, in: .rect(cornerRadius: 24))
+        .padding(10)
+        .glassEffect(.clear, in: .rect(cornerRadius: 20))
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { cardWidth = $0 }
     }
 
     private func tile(_ browser: Browser, index: Int) -> some View {
         Button {
             onPick(browser)
         } label: {
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Image(nsImage: browser.icon)
                     .resizable()
-                    .frame(width: 52, height: 52)
-                Text("\(index + 1)")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundStyle(index < 9 ? .secondary : Color.secondary.opacity(0))
+                    .frame(width: 44, height: 44)
+                if showNumberHints {
+                    Text("\(index + 1)")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(index < 9 ? .secondary : Color.secondary.opacity(0))
+                }
             }
-            .padding(10)
+            .padding(8)
             .background {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-                    .opacity(selected == index ? 1 : 0)
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.white.opacity(selected == index ? 0.18 : 0))
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 14)
                     .strokeBorder(.white.opacity(selected == index ? 0.5 : 0), lineWidth: 1)
             }
-            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .contentShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(.plain)
         .onHover { hovering in
@@ -140,7 +145,19 @@ struct PickerOverlay: View {
     private func copyURL() {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(url.absoluteString, forType: .string)
-        withAnimation(.easeInOut(duration: 0.15)) { copied = true }
+
+        // Bouncy press feedback.
+        withAnimation(.spring(response: 0.18, dampingFraction: 0.45)) { chipBounce = true }
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.5).delay(0.1)) { chipBounce = false }
+
+        copied = true
+        // Revert "Copied" → URL after 2 seconds.
+        copyResetTask?.cancel()
+        copyResetTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            copied = false
+        }
     }
 
     private func handleKey(_ press: KeyPress) -> KeyPress.Result {
