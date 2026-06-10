@@ -22,7 +22,12 @@ struct PickerOverlay: View {
     @State private var cardWidth: CGFloat = 0
     @AppStorage("showNumberHints") private var showNumberHints = true
     @AppStorage("urlChipBelow") private var urlChipBelow = false
+    @AppStorage("pickerPosition") private var pickerPositionRaw = PickerPosition.center.rawValue
     @FocusState private var focused: Bool
+
+    private var pickerPosition: PickerPosition {
+        PickerPosition(rawValue: pickerPositionRaw) ?? .center
+    }
 
     var body: some View {
         ZStack {
@@ -36,14 +41,18 @@ struct PickerOverlay: View {
             GlassEffectContainer(spacing: 16) {
                 VStack(spacing: 14) {
                     if urlChipBelow {
-                        cardWithName
+                        // Chip below → name sits above the menu.
+                        VStack(spacing: 6) { nameLabel; card }
                         urlChip
                     } else {
+                        // Chip above → name sits below the menu.
                         urlChip
-                        cardWithName
+                        VStack(spacing: 6) { card; nameLabel }
                     }
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: pickerPosition.alignment)
+            .padding(pickerPosition == .center ? 0 : 48)
             .scaleEffect(appeared ? 1 : 0.92)
             .opacity(appeared ? 1 : 0)
         }
@@ -94,18 +103,15 @@ struct PickerOverlay: View {
 
     // MARK: Picker card
 
-    /// The glass card plus a fixed-height name label for the selected browser. The
-    /// label sits outside the card so showing it never shifts the icon tiles.
-    private var cardWithName: some View {
-        VStack(spacing: 6) {
-            card
-            Text(browsers.indices.contains(selected) ? browsers[selected].name : " ")
-                .font(.system(size: 11, weight: .medium))
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundStyle(.secondary)
-                .frame(height: 14)
-        }
+    /// Fixed-height name label for the selected browser. Lives outside the card so
+    /// showing it never shifts the icon tiles.
+    private var nameLabel: some View {
+        Text(browsers.indices.contains(selected) ? browsers[selected].name : " ")
+            .font(.system(size: 11, weight: .medium))
+            .lineLimit(1)
+            .truncationMode(.middle)
+            .foregroundStyle(.secondary)
+            .frame(height: 14)
     }
 
     private var card: some View {
