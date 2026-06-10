@@ -72,6 +72,12 @@ struct BrowsersPane: View {
                         Image(nsImage: browser.icon)
                             .resizable()
                             .frame(width: 22, height: 22)
+                            .overlay(alignment: .bottomTrailing) {
+                                if let profile = browser.profile {
+                                    ProfileBadge(profile: profile, size: 12)
+                                        .offset(x: 2, y: 2)
+                                }
+                            }
                             .opacity(enabled ? 1 : 0.4)
                         Text(browser.name)
                             .font(.system(size: 13))

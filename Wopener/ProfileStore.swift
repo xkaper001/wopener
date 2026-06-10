@@ -17,6 +17,7 @@ import Foundation
 struct BrowserProfile: Hashable {
     let directory: String   // e.g. "Profile 1" — passed as --profile-directory
     let name: String        // e.g. "Work" — shown in the UI
+    let avatarURL: URL?     // on-disk Google account photo, if the profile is signed in
 }
 
 enum ProfileStore {
@@ -59,8 +60,19 @@ enum ProfileStore {
             // Skip stale cache entries whose directory no longer exists on disk.
             guard FileManager.default.fileExists(
                 atPath: base.appendingPathComponent(directory).path) else { continue }
-            let name = (value as? [String: Any])?["name"] as? String ?? directory
-            result.append(BrowserProfile(directory: directory, name: name))
+            let info = value as? [String: Any]
+            let name = info?["name"] as? String ?? directory
+
+            // The Google account photo, when signed in, lives on disk inside the
+            // profile dir under the name in `gaia_picture_file_name`. The built-in
+            // `avatar_icon` (chrome://theme/IDR_PROFILE_AVATAR_NN) is baked into the
+            // browser's resources.pak and not reachable, so it's left to the monogram.
+            var avatarURL: URL?
+            if let file = info?["gaia_picture_file_name"] as? String, !file.isEmpty {
+                let candidate = base.appendingPathComponent(directory).appendingPathComponent(file)
+                if FileManager.default.fileExists(atPath: candidate.path) { avatarURL = candidate }
+            }
+            result.append(BrowserProfile(directory: directory, name: name, avatarURL: avatarURL))
         }
 
         guard result.count > 1 else { return [] }

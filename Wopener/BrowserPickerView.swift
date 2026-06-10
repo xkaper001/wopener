@@ -36,11 +36,11 @@ struct PickerOverlay: View {
             GlassEffectContainer(spacing: 16) {
                 VStack(spacing: 14) {
                     if urlChipBelow {
-                        card
+                        cardWithName
                         urlChip
                     } else {
                         urlChip
-                        card
+                        cardWithName
                     }
                 }
             }
@@ -94,6 +94,20 @@ struct PickerOverlay: View {
 
     // MARK: Picker card
 
+    /// The glass card plus a fixed-height name label for the selected browser. The
+    /// label sits outside the card so showing it never shifts the icon tiles.
+    private var cardWithName: some View {
+        VStack(spacing: 6) {
+            card
+            Text(browsers.indices.contains(selected) ? browsers[selected].name : " ")
+                .font(.system(size: 11, weight: .medium))
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .foregroundStyle(.secondary)
+                .frame(height: 14)
+        }
+    }
+
     private var card: some View {
         Group {
             if browsers.isEmpty {
@@ -102,7 +116,7 @@ struct PickerOverlay: View {
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 6)
             } else {
-                HStack(spacing: 8) {
+                HStack(spacing: 4) {
                     ForEach(Array(browsers.enumerated()), id: \.element.id) { index, browser in
                         tile(browser, index: index)
                     }
@@ -121,22 +135,20 @@ struct PickerOverlay: View {
             VStack(spacing: 4) {
                 Image(nsImage: browser.icon)
                     .resizable()
-                    .frame(width: 44, height: 44)
-                if let profile = browser.profile {
-                    Text(profile.name)
-                        .font(.system(size: 9, weight: .medium))
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .frame(maxWidth: 56)
-                        .foregroundStyle(.secondary)
-                }
+                    .frame(width: 56, height: 56)
+                    .overlay(alignment: .bottomTrailing) {
+                        if let profile = browser.profile {
+                            ProfileBadge(profile: profile, size: 20)
+                                .offset(x: 3, y: 3)
+                        }
+                    }
                 if showNumberHints {
                     Text("\(index + 1)")
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundStyle(index < 9 ? .secondary : Color.secondary.opacity(0))
                 }
             }
-            .padding(8)
+            .padding(2)
             .background {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(.white.opacity(selected == index ? 0.18 : 0))
