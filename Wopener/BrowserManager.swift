@@ -6,11 +6,15 @@
 import AppKit
 import SwiftUI
 
-/// A browser installed on the system that can handle http/https URLs.
+/// A browser installed on the system that can handle http/https URLs. A browser with
+/// multiple profiles is represented as one `Browser` per profile (each with its own
+/// `id`, number, toggle and order slot).
 struct Browser: Identifiable, Hashable {
-    let id: String   // bundle identifier
-    let name: String
+    let id: String          // bundle id, or "bundleID::<profile dir>" for a profile variant
+    let bundleID: String
+    let name: String        // browser name, or "Browser — Profile" for a profile variant
     let appURL: URL
+    let profile: BrowserProfile?
 
     var icon: NSImage { NSWorkspace.shared.icon(forFile: appURL.path) }
 }
@@ -57,14 +61,40 @@ final class BrowserManager {
             guard let bid = Bundle(url: appURL)?.bundleIdentifier, bid != selfBundleID else { continue }
             let name = FileManager.default.displayName(atPath: appURL.path)
                 .replacingOccurrences(of: ".app", with: "")
-            found.append(Browser(id: bid, name: name, appURL: appURL))
+
+            let profiles = ProfileStore.profiles(forBundleID: bid)
+            if profiles.isEmpty {
+                found.append(Browser(id: bid, bundleID: bid, name: name, appURL: appURL, profile: nil))
+            } else {
+                for profile in profiles {
+                    found.append(Browser(id: "\(bid)::\(profile.directory)", bundleID: bid,
+                                         name: "\(name) — \(profile.name)", appURL: appURL,
+                                         profile: profile))
+                }
+            }
         }
         found.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         browsers = store.apply(to: found)
     }
 
-    /// Open the URL in the chosen browser.
+    /// Open the URL in the chosen browser (and profile, if any).
     func open(_ url: URL, in browser: Browser) {
+        // A profile launch must hit the browser binary directly with
+        // `--profile-directory=`: NSWorkspace's launch arguments are ignored when the
+        // browser is already running, but the binary forwards args to the live
+        // instance and respects the profile.
+        if let profile = browser.profile,
+           let exec = Bundle(url: browser.appURL)?.executableURL {
+            let process = Process()
+            process.executableURL = exec
+            process.arguments = ["--profile-directory=\(profile.directory)", url.absoluteString]
+            do { try process.run() } catch { fallbackOpen(url, in: browser) }
+            return
+        }
+        fallbackOpen(url, in: browser)
+    }
+
+    private func fallbackOpen(_ url: URL, in browser: Browser) {
         NSWorkspace.shared.open([url], withApplicationAt: browser.appURL,
                                 configuration: NSWorkspace.OpenConfiguration())
     }

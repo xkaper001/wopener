@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AboutPane: View {
-    private static let repoURL = URL(string: "https://github.com/xkaper/wopener")!
+    private static let repoURL = URL(string: "https://github.com/xkaper001/wopener")!
 
     private let blurb = "Wopener slips in as your default browser and, every time you click a link, hands you a sweet little glass picker so you decide which browser opens it — no rules to babysit, no memory to second-guess. Built with love, SwiftUI, and a healthy obsession with Liquid Glass."
     private let openLine = "Free and open source. Stars, issues, and pull requests are all welcome — come tinker. ✨"

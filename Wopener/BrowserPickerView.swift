@@ -116,6 +116,14 @@ struct PickerOverlay: View {
                 Image(nsImage: browser.icon)
                     .resizable()
                     .frame(width: 44, height: 44)
+                if let profile = browser.profile {
+                    Text(profile.name)
+                        .font(.system(size: 9, weight: .medium))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 56)
+                        .foregroundStyle(.secondary)
+                }
                 if showNumberHints {
                     Text("\(index + 1)")
                         .font(.system(size: 10, weight: .bold, design: .rounded))
