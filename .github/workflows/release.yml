@@ -29,11 +29,20 @@ jobs:
 
       - name: Package
         run: |
-          ditto -c -k --keepParent build/Build/Products/Release/Wopener.app Wopener.zip
+          mkdir -p dmg-stage
+          cp -R build/Build/Products/Release/Wopener.app dmg-stage/
+          ln -s /Applications dmg-stage/Applications
+          hdiutil create \
+            -volname Wopener \
+            -srcfolder dmg-stage \
+            -fs HFS+ \
+            -format UDZO \
+            -ov \
+            Wopener.dmg
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          files: Wopener.zip
+          files: Wopener.dmg
           generate_release_notes: true
           fail_on_unmatched_files: true
