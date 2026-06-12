@@ -21,7 +21,8 @@ struct PickerOverlay: View {
     @State private var chipBounce = false
     @State private var copyResetTask: Task<Void, Never>?
     @State private var cardWidth: CGFloat = 0
-    @State private var saveBounce = false
+    @State private var saved = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("showNumberHints") private var showNumberHints = true
     @AppStorage("urlChipBelow") private var urlChipBelow = false
     @AppStorage("pickerPosition") private var pickerPositionRaw = PickerPosition.center.rawValue
@@ -148,16 +149,44 @@ struct PickerOverlay: View {
     }
 
     /// Leading "Save for later" tile. Triggered by click or the configured save key.
+    /// On save the bookmark morphs into a green checkmark with a spring pop, then
+    /// the picker dismisses (see `triggerSave`).
     private var saveTile: some View {
         Button {
             triggerSave()
         } label: {
             VStack(spacing: 4) {
-                Image("SaveForLater")
-                    .resizable()
-                    .interpolation(.high)
-                    .antialiased(true)
-                    .frame(width: 56, height: 56)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(.white.opacity(0.9))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 14)
+                                .strokeBorder(.white.opacity(0.9), lineWidth: 1)
+                                .blendMode(.overlay)
+                        }
+                    // Dark bookmark — morphs out on save.
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(Color(red: 0.10, green: 0.12, blue: 0.16))
+                        .scaleEffect(saved ? 0.5 : 1)
+                        .opacity(saved ? 0 : 1)
+                    // Green check — draws in on save.
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(Color(red: 0.086, green: 0.639, blue: 0.290))
+                        .scaleEffect(saved ? 1 : 0.4)
+                        .opacity(saved ? 1 : 0)
+                }
+                .frame(width: 56, height: 56)
+                .keyframeAnimator(initialValue: 1.0, trigger: saved) { content, scale in
+                    content.scaleEffect(saved ? scale : 1)
+                } keyframes: { _ in
+                    KeyframeTrack {
+                        CubicKeyframe(0.86, duration: 0.12)
+                        CubicKeyframe(1.1, duration: 0.18)
+                        CubicKeyframe(1.0, duration: 0.15)
+                    }
+                }
                 if showNumberHints {
                     Text(saveForLaterKey)
                         .font(.system(size: 10, weight: .bold, design: .rounded))
@@ -168,7 +197,6 @@ struct PickerOverlay: View {
             .contentShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(.plain)
-        .scaleEffect(saveBounce ? 0.9 : 1)
         .help("Save for later")
     }
 
@@ -230,10 +258,19 @@ struct PickerOverlay: View {
         }
     }
 
-    /// Save the link with a brief bounce, then hand off (caller dismisses).
+    /// Morph the bookmark into a green check, then hand off (caller dismisses)
+    /// once the confirmation has been seen.
     private func triggerSave() {
-        withAnimation(.spring(response: 0.18, dampingFraction: 0.45)) { saveBounce = true }
-        onSave()
+        guard !saved else { return }
+        if reduceMotion {
+            saved = true
+        } else {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { saved = true }
+        }
+        Task {
+            try? await Task.sleep(for: .seconds(reduceMotion ? 0.2 : 0.65))
+            onSave()
+        }
     }
 
     private func handleKey(_ press: KeyPress) -> KeyPress.Result {

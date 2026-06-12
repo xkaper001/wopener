@@ -1,5 +1,7 @@
 {
-  "fill" : "automatic",
+  "fill" : {
+    "solid" : "display-p3:0.99121,0.96777,0.92432,1.00000"
+  },
   "groups" : [
     {
       "blur-material" : 0.5,
@@ -15,7 +17,7 @@
             {
               "appearance" : "dark",
               "value" : {
-                "solid" : "extended-gray:1.00000,1.00000"
+                "solid" : "display-p3:0.99121,0.96777,0.92041,1.00000"
               }
             },
             {

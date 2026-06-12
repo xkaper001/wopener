@@ -10,8 +10,8 @@ import SwiftUI
 struct AboutPane: View {
     private static let repoURL = URL(string: "https://github.com/xkaper001/wopener")!
 
-    private let blurb = "Wopener slips in as your default browser and, every time you click a link, hands you a sweet little glass picker so you decide which browser opens it — no rules to babysit, no memory to second-guess. Built with love, SwiftUI, and a healthy obsession with Liquid Glass."
-    private let openLine = "Free and open source. Stars, issues, and pull requests are all welcome — come tinker. ✨"
+    private let blurb = "macOS only lets one browser be the default, and every link just obeys it. I kept opening work links in my personal browser by accident, so I built Wopener. Now the click pauses and I pick."
+    private let openLine = "It's free and open source. The code lives on GitHub. Read it, fork it, or tell me what I got wrong."
 
     private var version: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
