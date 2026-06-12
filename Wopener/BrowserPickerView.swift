@@ -12,6 +12,7 @@ struct PickerOverlay: View {
     let url: URL
     let browsers: [Browser]
     let onPick: (Browser) -> Void
+    let onSave: () -> Void
     let onCancel: () -> Void
 
     @State private var appeared = false
@@ -20,9 +21,12 @@ struct PickerOverlay: View {
     @State private var chipBounce = false
     @State private var copyResetTask: Task<Void, Never>?
     @State private var cardWidth: CGFloat = 0
+    @State private var saveBounce = false
     @AppStorage("showNumberHints") private var showNumberHints = true
     @AppStorage("urlChipBelow") private var urlChipBelow = false
     @AppStorage("pickerPosition") private var pickerPositionRaw = PickerPosition.center.rawValue
+    @AppStorage("saveForLaterKey") private var saveForLaterKey = "`"
+    @AppStorage("showSaveTile") private var showSaveTile = true
     @FocusState private var focused: Bool
 
     private var pickerPosition: PickerPosition {
@@ -38,17 +42,15 @@ struct PickerOverlay: View {
                 .contentShape(Rectangle())
                 .onTapGesture { onCancel() }
 
-            GlassEffectContainer(spacing: 16) {
-                VStack(spacing: 14) {
-                    if urlChipBelow {
-                        // Chip below → name sits above the menu.
-                        VStack(spacing: 6) { nameLabel; card }
-                        urlChip
-                    } else {
-                        // Chip above → name sits below the menu.
-                        urlChip
-                        VStack(spacing: 6) { card; nameLabel }
-                    }
+            VStack(spacing: 10) {
+                if urlChipBelow {
+                    // Chip below → name sits above the menu.
+                    VStack(spacing: 6) { nameLabel; cardCluster }
+                    urlChip
+                } else {
+                    // Chip above → name sits below the menu.
+                    urlChip
+                    VStack(spacing: 6) { cardCluster; nameLabel }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: pickerPosition.alignment)
@@ -114,24 +116,60 @@ struct PickerOverlay: View {
             .frame(height: 14)
     }
 
+    /// Card wrapped in its own glass container so its glass never blends into the
+    /// detached URL chip, even when they sit close together.
+    private var cardCluster: some View {
+        GlassEffectContainer(spacing: 16) { card }
+    }
+
     private var card: some View {
-        Group {
+        HStack(spacing: 4) {
+            if showSaveTile {
+                saveTile
+                Divider()
+                    .frame(height: 56)
+                    .padding(.horizontal, 2)
+            }
             if browsers.isEmpty {
                 Text("No browsers found")
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 6)
+                    .padding(.horizontal, 4)
             } else {
-                HStack(spacing: 4) {
-                    ForEach(Array(browsers.enumerated()), id: \.element.id) { index, browser in
-                        tile(browser, index: index)
-                    }
+                ForEach(Array(browsers.enumerated()), id: \.element.id) { index, browser in
+                    tile(browser, index: index)
                 }
             }
         }
         .padding(10)
         .glassEffect(.clear, in: .rect(cornerRadius: 20))
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { cardWidth = $0 }
+    }
+
+    /// Leading "Save for later" tile. Triggered by click or the configured save key.
+    private var saveTile: some View {
+        Button {
+            triggerSave()
+        } label: {
+            VStack(spacing: 4) {
+                Image("SaveForLater")
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .frame(width: 56, height: 56)
+                if showNumberHints {
+                    Text(saveForLaterKey)
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(2)
+            .contentShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(.plain)
+        .scaleEffect(saveBounce ? 0.9 : 1)
+        .help("Save for later")
     }
 
     private func tile(_ browser: Browser, index: Int) -> some View {
@@ -192,7 +230,17 @@ struct PickerOverlay: View {
         }
     }
 
+    /// Save the link with a brief bounce, then hand off (caller dismisses).
+    private func triggerSave() {
+        withAnimation(.spring(response: 0.18, dampingFraction: 0.45)) { saveBounce = true }
+        onSave()
+    }
+
     private func handleKey(_ press: KeyPress) -> KeyPress.Result {
+        // The configured save key fires before number/arrow handling.
+        if !saveForLaterKey.isEmpty, press.characters == saveForLaterKey {
+            triggerSave(); return .handled
+        }
         switch press.key {
         case .escape:
             onCancel(); return .handled

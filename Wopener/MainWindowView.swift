@@ -7,6 +7,7 @@ import SwiftUI
 
 /// Sidebar categories for the main window, settings-app style.
 enum SettingsCategory: String, CaseIterable, Identifiable {
+    case saved
     case browsers
     case general
     case about
@@ -15,6 +16,7 @@ enum SettingsCategory: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
+        case .saved:    return "Saved"
         case .browsers: return "Browsers"
         case .general:  return "General"
         case .about:    return "About"
@@ -23,6 +25,7 @@ enum SettingsCategory: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
+        case .saved:    return "bookmark"
         case .browsers: return "globe"
         case .general:  return "gearshape"
         case .about:    return "info.circle"
@@ -31,7 +34,7 @@ enum SettingsCategory: String, CaseIterable, Identifiable {
 }
 
 struct MainWindowView: View {
-    @State private var selection: SettingsCategory = .browsers
+    @State private var selection: SettingsCategory = .saved
 
     var body: some View {
         NavigationSplitView {
@@ -43,6 +46,7 @@ struct MainWindowView: View {
         } detail: {
             Group {
                 switch selection {
+                case .saved:    SavedLinksPane()
                 case .browsers: BrowsersPane()
                 case .general:  GeneralPane()
                 case .about:    AboutPane()

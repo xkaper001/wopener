@@ -43,6 +43,10 @@ final class PickerWindowController {
                 BrowserManager.shared.open(url, in: browser)
                 self?.dismiss()
             },
+            onSave: { [weak self] in
+                SavedLinksStore.shared.add(url)
+                self?.dismiss()
+            },
             onCancel: { [weak self] in self?.dismiss() }
         )
 
