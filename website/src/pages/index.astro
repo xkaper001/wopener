@@ -1,0 +1,199 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CTAButton from '../components/CTAButton.astro';
+import Intro from '../components/Intro.astro';
+import PickerPreview from '../components/PickerPreview.astro';
+import { DOWNLOAD_URL, MIN_MACOS, REPO_URL } from '../site';
+
+/*
+  Alcove-style home: a big centered hero with a marked word, the interactive
+  picker demo (the only glass on the page), a flat icon feature grid (icon +
+  bold heading, no cards), and a single centred call to action. The giant faded
+  wordmark lives in the footer.
+*/
+const features = [
+  {
+    title: 'Keyboard<br>first',
+    note: 'Press 1 to 9 to open that browser instantly.',
+    icon: 'keyboard',
+  },
+  {
+    title: 'A tile per<br>profile',
+    note: 'Chrome, Brave, Edge and Vivaldi split per account.',
+    icon: 'profiles',
+  },
+  {
+    title: 'Save for<br>later',
+    note: 'Stash a link and reopen the picker for it anytime.',
+    icon: 'bookmark',
+  },
+  {
+    title: 'Order it<br>your way',
+    note: 'Drag to set the 1 to 9 order, toggle any off.',
+    icon: 'reorder',
+  },
+  {
+    title: 'Copy without<br>opening',
+    note: 'Tap the detached URL chip to copy and dismiss.',
+    icon: 'copy',
+  },
+  {
+    title: 'Place it<br>anywhere',
+    note: 'Anchor the cluster to any of nine on-screen spots.',
+    icon: 'grid',
+  },
+  {
+    title: 'Your own<br>save key',
+    note: 'Rebind the stash key to whatever feels natural.',
+    icon: 'key',
+  },
+  {
+    title: 'It never<br>picks for you',
+    note: 'No rules, no defaults. Every link, every time.',
+    icon: 'eye',
+  },
+];
+---
+
+<Layout>
+  <Intro />
+  <Header currentPath="/" />
+
+  <main class="flex flex-1 flex-col items-center px-5">
+    <!-- ============ HERO ============ -->
+    <section class="flex w-full max-w-4xl flex-col items-center pt-32 text-center sm:pt-44">
+      <h1
+        id="introHeroTitle"
+        class="text-5xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-8xl sm:leading-[0.98]"
+        data-intro-hide
+      >
+        The web opener<br />
+        <span class="whitespace-nowrap">
+          Apple {' '}
+          <mark class="relative bg-transparent text-ink-900">
+            <span
+              class="absolute inset-x-[-0.12em] inset-y-[0.08em] -z-10 -rotate-1 rounded-2xl bg-accent/15"
+              aria-hidden="true"></span>
+            forgot
+          </mark>.
+        </span>
+      </h1>
+
+      <p class="reveal mt-6 text-base text-ink-900/45 sm:text-lg" style="--reveal-delay: 150ms">
+        Click any link, pick the browser. Free and open source · {MIN_MACOS}+.
+      </p>
+
+      <div
+        class="reveal mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
+        style="--reveal-delay: 250ms"
+      >
+        <CTAButton href={DOWNLOAD_URL} label="Download for Mac" />
+        <CTAButton href={REPO_URL} variant="secondary" label="Star on GitHub" altLabel="Open Source" />
+      </div>
+    </section>
+
+    <!-- ============ INTERACTIVE PREVIEW ============ -->
+    <!-- Full-bleed (w-screen, self-center) so the wallpaper frame is wider than
+         the content column. NO transform here (and no `reveal`): a transform
+         would form a stacking/containing context that buries liquidGL's
+         body-level refraction canvas. -->
+    <section class="mt-16 w-[75vw] self-center sm:mt-20">
+      <PickerPreview />
+      <p class="reveal mx-auto mt-5 flex w-fit items-center gap-2 text-sm font-medium text-ink-900/40">
+        <svg class="size-3.5 fill-current" viewBox="0 0 28 28" aria-hidden="true">
+          <path d="M5.06 3.024C4.804 1.238 6.858.052 8.276 1.168l17.117 13.466c1.47 1.159.688 3.522-1.182 3.574l-7.03.19a2 2 0 0 0-1.65.953l-3.68 5.993c-.98 1.594-3.418 1.089-3.685-.764L5.06 3.024Z" />
+        </svg>
+        Psst… it's interactive.
+      </p>
+    </section>
+
+    <!-- ============ FEATURE GRID (alcove-style icons) ============ -->
+    <section class="w-full max-w-5xl pt-32 sm:pt-44">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-4 sm:gap-y-16">
+        {features.map((f) => (
+          <article class="group flex flex-col items-center text-center">
+            <div class="mb-5 text-accent transition duration-300 group-hover:-translate-y-0.5">
+              {f.icon === 'keyboard' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="6" width="20" height="12" rx="2.5" />
+                  <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+                </svg>
+              )}
+              {f.icon === 'profiles' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="8" cy="9" r="3.5" />
+                  <circle cx="16" cy="9" r="3.5" class="transition duration-500 group-hover:translate-x-1" />
+                  <path d="M3 19a5 5 0 0 1 10 0M11 19a5 5 0 0 1 10 0" />
+                </svg>
+              )}
+              {f.icon === 'bookmark' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4-7 4V5a1 1 0 0 1 1-1Z" />
+                </svg>
+              )}
+              {f.icon === 'reorder' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 6h11M9 12h11M9 18h11" />
+                  <circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none" />
+                  <circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none" />
+                  <circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none" />
+                </svg>
+              )}
+              {f.icon === 'copy' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="9" y="9" width="11" height="11" rx="2.5" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+              )}
+              {f.icon === 'grid' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <circle cx="5" cy="5" r="1.4" fill="currentColor" />
+                  <circle cx="12" cy="5" r="1.4" fill="currentColor" />
+                  <circle cx="19" cy="5" r="1.4" fill="currentColor" />
+                  <circle cx="5" cy="12" r="1.4" fill="currentColor" />
+                  <circle cx="12" cy="12" r="2.4" />
+                  <circle cx="19" cy="12" r="1.4" fill="currentColor" />
+                  <circle cx="5" cy="19" r="1.4" fill="currentColor" />
+                  <circle cx="12" cy="19" r="1.4" fill="currentColor" />
+                  <circle cx="19" cy="19" r="1.4" fill="currentColor" />
+                </svg>
+              )}
+              {f.icon === 'key' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="8" cy="8" r="4.5" />
+                  <path d="m11 11 8 8M16 16l2-2M19 19l2-2" />
+                </svg>
+              )}
+              {f.icon === 'eye' && (
+                <svg class="size-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+            </div>
+            <h2 class="text-xl font-bold leading-tight sm:text-2xl" set:html={f.title} />
+            <p class="mt-2 max-w-[15rem] text-sm leading-snug text-ink-900/50">{f.note}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- ============ FINAL CTA ============ -->
+    <section class="w-full max-w-3xl pt-32 pb-8 text-center sm:pt-44">
+      <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
+        Take back the open.
+      </h2>
+      <p class="mx-auto mt-5 max-w-md text-lg text-ink-900/55">
+        Set Wopener as your default browser and choose, every single time.
+      </p>
+      <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+        <CTAButton href={DOWNLOAD_URL} label="Download for Mac" />
+        <CTAButton href={REPO_URL} variant="secondary" label="Star on GitHub" altLabel="Open Source" />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

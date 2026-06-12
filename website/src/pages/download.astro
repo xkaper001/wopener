@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CTAButton from '../components/CTAButton.astro';
+import { DOWNLOAD_URL, RELEASES_URL, REPO_URL, MIN_MACOS, LICENSE } from '../site';
+
+const steps = [
+  'Open Wopener from your Applications folder.',
+  'In the Browsers tab, click Set as Default Browser.',
+  'Confirm in the macOS dialog that appears.',
+  'Click any link. The picker appears.',
+];
+---
+
+<Layout title="Download">
+  <Header currentPath="/download" />
+
+  <main class="flex flex-1 flex-col items-center px-5">
+    <section class="w-full max-w-3xl pt-32 text-center sm:pt-40">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">Download Wopener</h1>
+      <p class="mx-auto mt-5 max-w-md text-lg text-ink-900/60">
+        Free and {LICENSE} licensed. Grab the latest build, or compile it
+        yourself.
+      </p>
+      <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <CTAButton href={DOWNLOAD_URL} label="Download for Mac" />
+        <CTAButton href={RELEASES_URL} variant="secondary" label="All releases" />
+      </div>
+      <p class="mt-4 text-sm text-ink-900/40">
+        {MIN_MACOS} or later. Not yet signed or notarized, so on first launch
+        macOS blocks it. Right-click the app, choose Open, then Open again, or
+        allow it in System Settings, Privacy and Security.
+      </p>
+    </section>
+
+    <!-- Build from source -->
+    <section class="w-full max-w-3xl pt-20 sm:pt-24">
+      <div>
+        <h2 class="text-xl font-semibold">Build from source</h2>
+        <p class="mt-2 text-ink-900/55">Requires {MIN_MACOS} and Xcode 26 or later.</p>
+        <pre class="mt-5 overflow-x-auto rounded-2xl border border-[#FFF0DF]/10 bg-ink-950 p-5 font-mono text-sm leading-relaxed text-[#FFF0DF]/85"><code>git clone {REPO_URL}.git
+cd wopener
+xcodebuild -project Wopener.xcodeproj -scheme Wopener \
+  -configuration Debug build</code></pre>
+      </div>
+    </section>
+
+    <!-- Setup steps -->
+    <section class="w-full max-w-3xl pt-20 sm:pt-24">
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Set it up in seconds</h2>
+      <ol class="mt-7 space-y-3">
+        {steps.map((step, i) => (
+          <li class="flex items-center gap-4 rounded-2xl border border-black/10 px-5 py-4">
+            <span class="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-sm font-bold text-[#FFF0DF]">
+              {i + 1}
+            </span>
+            <span class="text-ink-900/75">{step}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,97 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  label: string;
+  /* When set, secondary renders a GitHub glyph and cross-fades label⇄altLabel every 2s. */
+  altLabel?: string;
+}
+
+const { href, variant = 'primary', label, altLabel } = Astro.props;
+
+/*
+  Alcove-style action pill. Primary animates on hover: the leading glyph slides
+  out to the left (scale-x + blur) while a trailing arrow slides in from the
+  right and the label nudges left — a single icon→arrow swap. Secondary is a
+  flat, quiet pill with no glyph.
+*/
+const base =
+  'group relative inline-flex max-h-14 items-center justify-center rounded-2xl text-base font-semibold whitespace-nowrap outline-none transition duration-300 focus-visible:ring-2 focus-visible:ring-accent/60 active:scale-[0.97]';
+
+const variants = {
+  primary: 'bg-accent text-[#FFF0DF] shadow-lg shadow-accent/25 px-5 py-3.5 pl-12',
+  secondary: 'bg-black/[0.05] text-ink-900/80 hover:bg-black/[0.08] px-6 py-3.5',
+};
+---
+
+<a href={href} class:list={[base, variants[variant]]}>
+  {variant === 'primary' && (
+    <>
+      {/* leading apple glyph — slides out left on hover */}
+      <span
+        class="ease absolute left-5 transition duration-300 group-hover:-translate-x-full group-hover:scale-x-50 group-hover:opacity-0 group-hover:blur-sm"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.05 20.28C16.07 21.23 15 21.08 13.97 20.63C12.88 20.17 11.88 20.15 10.73 20.63C9.29 21.25 8.53 21.07 7.67 20.28C2.79 15.25 3.51 7.59 9.05 7.31C10.4 7.38 11.34 8.05 12.13 8.11C13.31 7.87 14.44 7.18 15.7 7.27C17.21 7.39 18.35 7.99 19.1 9.07C15.98 10.94 16.72 15.05 19.58 16.2C19.01 17.7 18.27 19.19 17.04 20.29L17.05 20.28ZM12.03 7.25C11.88 5.02 13.69 3.18 15.77 3C16.06 5.58 13.43 7.5 12.03 7.25Z" />
+        </svg>
+      </span>
+
+      <span class="ease transition duration-300 group-hover:-translate-x-7">{label}</span>
+
+      {/* trailing arrow — slides in from right on hover */}
+      <span
+        class="ease absolute right-5 translate-x-full scale-x-50 opacity-0 blur-sm transition duration-300 group-hover:translate-x-0 group-hover:scale-x-100 group-hover:opacity-100 group-hover:blur-none"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </span>
+    </>
+  )}
+
+  {variant === 'secondary' && altLabel && (
+    <>
+      <svg class="mr-2" width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+      </svg>
+      <span class="cta-swap relative grid">
+        <span class="cta-a col-start-1 row-start-1">{label}</span>
+        <span class="cta-b col-start-1 row-start-1" aria-hidden="true">{altLabel}</span>
+      </span>
+    </>
+  )}
+
+  {variant === 'secondary' && !altLabel && label}
+</a>
+
+<style>
+  .cta-a { animation: cta-a 4s ease-in-out infinite; }
+  .cta-b { animation: cta-b 4s ease-in-out infinite; }
+
+  @keyframes cta-a {
+    0%, 42% { opacity: 1; transform: translateY(0); }
+    50%, 92% { opacity: 0; transform: translateY(-6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes cta-b {
+    0%, 42% { opacity: 0; transform: translateY(6px); }
+    50%, 92% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-a, .cta-b { animation: none; }
+    .cta-b { display: none; }
+  }
+</style>

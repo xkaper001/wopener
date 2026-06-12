@@ -1,0 +1,120 @@
+---
+/*
+  Cinematic home-page intro. A cursor-pointer glides to center, clicks, morphs
+  into the Wopener mark (true SVG path morph via GSAP MorphSVG), flies up to the
+  header logo slot, then hands off to the title + reveal cascade. Plays on every
+  home load. Reduced-motion users never arm it — they get the plain page.
+
+  Structural CSS + the .reveal hand-off live in src/styles/global.css.
+*/
+---
+
+{/* Arm before paint so intro-owned elements (header logo, hero title, .reveal)
+    are hidden with no flash. Skipped entirely under reduced motion. */}
+<script is:inline>
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('intro-armed');
+    // Failsafe: if the timeline never runs (module error), don't strand the
+    // page hidden — unhide and drop the overlay after a few seconds.
+    window.setTimeout(() => {
+      if (!window.__wopenerIntroPlayed) {
+        document.documentElement.classList.remove('intro-armed');
+        document.getElementById('introOverlay')?.remove();
+      }
+    }, 8000);
+  }
+</script>
+
+<div id="introOverlay" class="z-50" aria-hidden="true">
+  <div id="introBackdrop"></div>
+  <div id="introRipple"></div>
+  <div id="introStage">
+    {/* Lucide cursor icons (from public/mouse.svg + wopener.svg, viewBox 24).
+        #introPath + #introLine morph from the plain pointer to the click pointer;
+        #introSpark are the click sparkles that pop in on the click beat. */}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path id="introPath" d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+      <path id="introLine" d="m13 13 6 6" />
+      <g id="introSpark" opacity="0">
+        <path d="m7.188 2.239.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656-2.12 2.122" />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+  import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
+
+  gsap.registerPlugin(MorphSVGPlugin);
+
+  const overlay = document.getElementById('introOverlay');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduce || !overlay) {
+    overlay?.remove();
+  } else {
+    window.__wopenerIntroPlayed = true;
+
+    const stage = document.getElementById('introStage')!;
+    const path = document.getElementById('introPath')!;
+    const line = document.getElementById('introLine')!;
+    const spark = document.getElementById('introSpark')!;
+    const ripple = document.getElementById('introRipple')!;
+    const backdrop = document.getElementById('introBackdrop')!;
+    const hdrLogo = document.getElementById('introHdrLogo');
+    const hdrWord = document.getElementById('introHdrWord');
+    const title = document.getElementById('introHeroTitle');
+
+    // Morph targets — the click-pointer paths from public/wopener.svg (viewBox 24).
+    const WOP_CURSOR = 'm9 9 5 12 1.774-5.226L21 14 9 9z';
+    const WOP_LINE = 'm16.071 16.071 4.243 4.243';
+
+    const STAGE = 200; // px, matches #introStage width in global.css
+
+    // Header logo target, measured live (the logo is laid out but hidden).
+    const fly = () => {
+      const l = hdrLogo?.getBoundingClientRect();
+      if (!l || !l.width) return { x: 0, y: -window.innerHeight * 0.4, scale: 0.18 };
+      return {
+        x: l.left + l.width / 2 - window.innerWidth / 2,
+        y: l.top + l.height / 2 - window.innerHeight / 2,
+        scale: l.width / STAGE,
+      };
+    };
+
+    // Resting center = viewport center (stage is fixed at 50%/50% + xy/yPercent -50).
+    gsap.set(stage, { xPercent: -50, yPercent: -50, x: -150, y: 190, scale: 0.5, rotation: -12, autoAlpha: 0 });
+    gsap.set(ripple, { xPercent: -50, yPercent: -50, scale: 0, autoAlpha: 0 });
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    // 1 — cursor glides to center
+    tl.to(stage, { x: 0, y: 0, scale: 1, rotation: 0, autoAlpha: 1, duration: 0.95, ease: 'power2.out' });
+
+    // 2 — click beat: press pop + ripple ring, and the pointer morphs into the
+    //     click-pointer (cursor + line morph, sparkles pop) — the morph IS the click.
+    tl.to(stage, { scale: 0.84, duration: 0.12, ease: 'power2.in' }, '+=0.2')
+      .to(stage, { scale: 1, duration: 0.55, ease: 'elastic.out(1, 0.5)' });
+    tl.fromTo(ripple, { scale: 0, autoAlpha: 0.55 }, { scale: 3, autoAlpha: 0, duration: 0.6, ease: 'power2.out' }, '<');
+    tl.to(path, { morphSVG: WOP_CURSOR, duration: 0.45, ease: 'power2.inOut' }, '<')
+      .to(line, { morphSVG: WOP_LINE, duration: 0.45, ease: 'power2.inOut' }, '<');
+    tl.fromTo(spark, { autoAlpha: 0, scale: 0.4, transformOrigin: '50% 50%' }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'back.out(2)' }, '<+=0.1');
+
+    // 4 — backdrop clears, mark flies to the header logo slot
+    tl.to(backdrop, { autoAlpha: 0, duration: 0.6 }, '-=0.15');
+    tl.add(() => gsap.to(stage, { ...fly(), duration: 0.85, ease: 'power3.inOut' }), '<');
+
+    // 5 — real header logo + wordmark take over; drop the overlay
+    if (hdrLogo) tl.to(hdrLogo, { autoAlpha: 1, duration: 0.4 }, '-=0.3');
+    if (hdrWord) tl.to(hdrWord, { autoAlpha: 1, duration: 0.4 }, '<');
+    tl.to(stage, { autoAlpha: 0, duration: 0.3 }, '<+=0.1');
+    tl.add(() => overlay.remove());
+
+    // 6 — title enters (slight up-settle via back ease), then the rest cascades
+    if (title) {
+      tl.fromTo(title, { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'back.out(1.4)' }, '-=0.05');
+    }
+    tl.fromTo('.reveal', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out' }, title ? '-=0.45' : '<');
+  }
+</script>

@@ -1,0 +1,114 @@
+---
+import { REPO_URL } from '../site';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+
+// Build-time GitHub star count. Best-effort: failures leave it null and the
+// button still renders (just "Star"), so the build never breaks offline.
+let stars: number | null = null;
+try {
+  const res = await fetch('https://api.github.com/repos/xkaper001/wopener', {
+    headers: { Accept: 'application/vnd.github+json' },
+  });
+  if (res.ok) stars = (await res.json()).stargazers_count ?? null;
+} catch {
+  stars = null;
+}
+
+const starLabel =
+  stars === null
+    ? 'Star'
+    : stars >= 1000
+      ? `${(stars / 1000).toFixed(1).replace(/\.0$/, '')}k`
+      : `${stars}`;
+---
+
+<!--
+  Alcove-style header: a flat full-width cream bar (no card), a bold wordmark
+  beside the app icon, and bold rounded nav pills with glyphs. FAQ collapses to
+  an icon-only button on mobile; Download is a quiet flat pill whose leading
+  glyph swaps to an arrow on hover. The icon + wordmark keep their intro ids so
+  the cinematic intro can fly the cursor into the logo slot.
+-->
+<header class="fixed inset-x-0 top-0 z-40 bg-[#FFF0DF]">
+  <div class="flex w-full items-center justify-between px-5 py-4 sm:px-10 sm:py-5 lg:px-14">
+    <a href="/" class="group flex items-center gap-3 outline-none" aria-label="Wopener home">
+      <img id="introHdrLogo" src="/opener.png" alt="" class="size-9 rounded-[10px]" data-intro-hide />
+      <span id="introHdrWord" class="text-xl font-bold tracking-tight sm:text-2xl" data-intro-hide>Wopener</span>
+    </a>
+
+    <nav class="flex items-center gap-2 sm:gap-3">
+      <!-- GitHub stars — star glyph + count, sits left of FAQ -->
+      <a
+        href={REPO_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group inline-flex items-center justify-center rounded-2xl px-3.5 py-3 text-base font-bold text-ink-900/70 transition duration-300 hover:bg-black/[0.05] hover:text-ink-900 max-sm:bg-black/[0.05] sm:px-4 sm:text-lg"
+        aria-label={`Star Wopener on GitHub (${starLabel} stars)`}
+      >
+        <svg
+          class="size-[20px] transition duration-300 group-hover:scale-110 sm:mr-2"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.77l-5.8 3.05 1.11-6.46-4.7-4.58 6.49-.94L12 2.5z" />
+        </svg>
+        <span class="hidden sm:block">{starLabel}</span>
+      </a>
+
+      <!-- FAQ — speech-bubble glyph, icon-only on mobile -->
+      <a
+        href="/faq"
+        class:list={[
+          'group inline-flex items-center justify-center rounded-2xl px-3.5 py-3 text-base font-bold transition duration-300 sm:px-4 sm:text-lg',
+          currentPath === '/faq'
+            ? 'bg-black/[0.06] text-ink-900'
+            : 'text-ink-900/70 hover:bg-black/[0.05] hover:text-ink-900 max-sm:bg-black/[0.05]',
+        ]}
+        aria-label="Frequently asked questions"
+      >
+        <svg
+          class="size-[22px] origin-bottom transition duration-300 group-hover:-rotate-12 sm:mr-2"
+          viewBox="0 0 28 28"
+          aria-hidden="true"
+        >
+          <path
+            fill="currentColor"
+            d="M13.8906 26.9805C14.418 26.9805 14.9102 26.7578 15.3789 25.9492L17.5469 22.3281H21.4609C24.9531 22.3281 26.8281 20.3945 26.8281 16.9609V7.98438C26.8281 4.55078 24.9531 2.61719 21.4609 2.61719H6.36719C2.875 2.61719 1 4.53906 1 7.98438V16.9609C1 20.4062 2.875 22.3281 6.36719 22.3281H10.2344L12.4023 25.9492C12.8711 26.7578 13.3633 26.9805 13.8906 26.9805Z"
+          />
+          <path d="M8 10H20.25M8 14H16" stroke="#FFF0DF" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span class="hidden sm:block">FAQ</span>
+      </a>
+
+      <!-- Download — quiet flat pill, glyph→arrow swap -->
+      <a
+        href="/download"
+        class="group relative inline-flex items-center justify-center rounded-2xl bg-black/[0.05] py-3 pr-5 pl-11 text-base font-bold text-ink-900 outline-none transition duration-300 hover:bg-black/[0.08] active:scale-[0.97] sm:text-lg"
+        aria-label="Download for Mac"
+      >
+        <span
+          class="ease absolute left-4 transition duration-300 group-hover:-translate-x-full group-hover:scale-x-50 group-hover:opacity-0 group-hover:blur-sm"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.05 20.28C16.07 21.23 15 21.08 13.97 20.63C12.88 20.17 11.88 20.15 10.73 20.63C9.29 21.25 8.53 21.07 7.67 20.28C2.79 15.25 3.51 7.59 9.05 7.31C10.4 7.38 11.34 8.05 12.13 8.11C13.31 7.87 14.44 7.18 15.7 7.27C17.21 7.39 18.35 7.99 19.1 9.07C15.98 10.94 16.72 15.05 19.58 16.2C19.01 17.7 18.27 19.19 17.04 20.29L17.05 20.28ZM12.03 7.25C11.88 5.02 13.69 3.18 15.77 3C16.06 5.58 13.43 7.5 12.03 7.25Z" />
+          </svg>
+        </span>
+        <span class="ease transition duration-300 group-hover:-translate-x-6">Download</span>
+        <span
+          class="ease absolute right-4 translate-x-full scale-x-50 opacity-0 blur-sm transition duration-300 group-hover:translate-x-0 group-hover:scale-x-100 group-hover:opacity-100 group-hover:blur-none"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </span>
+      </a>
+    </nav>
+  </div>
+</header>
