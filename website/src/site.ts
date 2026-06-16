@@ -1,5 +1,7 @@
 // Central site config. Edit these in one place.
 
+export const TAGLINE = "The Web Opener Apple Forgot";
+
 // TODO(denji): replace with the direct .dmg URL once hosted.
 // Falls back to the GitHub releases page until then.
 export const DOWNLOAD_URL = "https://github.com/xkaper001/wopener/releases/latest";
@@ -9,3 +11,11 @@ export const RELEASES_URL = "https://github.com/xkaper001/wopener/releases";
 
 export const MIN_MACOS = "macOS 26.0";
 export const LICENSE = "Apache 2.0";
+
+// --- Notarisation fund ---------------------------------------------------
+// The Apple Developer Program costs $99/yr; that's the wall between Wopener
+// and notarised, double-click-to-open releases. Edit RAISED as sponsors roll
+// in (GitHub Sponsors has no public total API, so this is updated by hand).
+export const SPONSOR_URL = "https://github.com/sponsors/xkaper001";
+export const NOTARY_GOAL = 99; // USD, one year of notarised releases
+export const NOTARY_RAISED = 0; // USD raised so far — bump me

@@ -11,11 +11,19 @@
 import AppKit
 import SwiftUI
 
+/// Process-wide cache of decoded avatar photos, keyed by file path. Decoding an NSImage
+/// from disk on every SwiftUI body eval is wasteful; the picker re-renders often.
+private let avatarCache = NSCache<NSString, NSImage>()
+
 extension BrowserProfile {
-    /// The on-disk account photo, decoded lazily. Nil for profiles not signed in.
+    /// The on-disk account photo, decoded once and cached. Nil for profiles not signed in.
     var avatarImage: NSImage? {
         guard let url = avatarURL else { return nil }
-        return NSImage(contentsOf: url)
+        let key = url.path as NSString
+        if let cached = avatarCache.object(forKey: key) { return cached }
+        guard let image = NSImage(contentsOf: url) else { return nil }
+        avatarCache.setObject(image, forKey: key)
+        return image
     }
 
     /// First letter of the display name, used for the monogram fallback.

@@ -3,9 +3,7 @@
 /*
   Wopener site theme — flat espresso-on-cream, Alcove-style. The page chrome is
   deliberately flat (no glass cards): bare content on a warm cream ground, dark
-  ink pills for actions. The ONLY glass on the site is the interactive picker
-  demo (PickerPreview), which uses real WebGL refraction via its own scoped
-  `pp-*` classes — not these page styles.
+  ink pills for actions.
 */
 
 @theme {

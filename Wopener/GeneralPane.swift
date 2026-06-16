@@ -14,12 +14,54 @@ struct GeneralPane: View {
     @AppStorage("pickerPosition") private var pickerPositionRaw = PickerPosition.center.rawValue
     @AppStorage("saveForLaterKey") private var saveForLaterKey = "`"
     @AppStorage("showSaveTile") private var showSaveTile = true
+    @AppStorage("showMenuBarIcon") private var showMenuBarIcon = true
 
     @State private var listening = false
     @State private var keyMonitor: Any?
+    @State private var openAtLogin = LoginItem.isEnabled
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            Text("System")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.secondary)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Toggle(isOn: $openAtLogin) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Open at login")
+                            .font(.system(size: 13, weight: .medium))
+                        Text("Keep Wopener running in the background so the picker appears instantly.")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .toggleStyle(.switch)
+                .controlSize(.small)
+                .onChange(of: openAtLogin) { _, on in LoginItem.setEnabled(on) }
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                Toggle(isOn: $showMenuBarIcon) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Show menu bar icon")
+                            .font(.system(size: 13, weight: .medium))
+                        Text("Hide the Wopener icon from the menu bar. The picker still appears on link clicks.")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .toggleStyle(.switch)
+                .controlSize(.small)
+                .onChange(of: showMenuBarIcon) { _, _ in
+                    NotificationCenter.default.post(name: .wopenerMenuBarVisibilityChanged, object: nil)
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .glassEffect(.regular, in: .rect(cornerRadius: 18))
+
             Text("Picker")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.secondary)
@@ -124,6 +166,7 @@ struct GeneralPane: View {
             Spacer()
         }
         .padding(24)
+        .onAppear { openAtLogin = LoginItem.isEnabled }
         .onDisappear { stopListening() }
     }
 

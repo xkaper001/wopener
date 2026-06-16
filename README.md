@@ -2,7 +2,7 @@
 
 # Wopener
 
-**Your link, your choice.** 🪄
+**The Web Opener Apple Forgot.** 🪄
 
 A macOS default-browser interceptor with a Liquid Glass picker. Set Wopener as your
 system default browser, and every link click pops a centered glass picker so *you*
@@ -66,6 +66,50 @@ Or open `Wopener.xcodeproj` in Xcode and run (⌘R).
    macOS confirmation dialog), *or* set it manually in **System Settings ▸ Desktop &
    Dock ▸ Default web browser → Wopener**.
 3. Click any link — the picker appears.
+
+### "Wopener is damaged / can't be opened" — the Gatekeeper jail
+
+If you grabbed a pre-built `.dmg` (not built it yourself), macOS will refuse it on first
+launch: *"Wopener can't be opened because Apple cannot check it for malicious software."*
+
+That's **not a bug and not malware** — it's Gatekeeper doing its job on an app that
+hasn't been notarised yet (see below for *why*). Spring it out once and macOS remembers:
+
+- **Right-click** (or Control-click) the app → **Open** → **Open** again in the dialog, *or*
+- Open it once, then **System Settings ▸ Privacy & Security ▸ Open Anyway**, *or*
+- From a terminal: `xattr -dr com.apple.quarantine /Applications/Wopener.app`
+
+You only do this once. Building from source skips it entirely — you sign locally.
+
+## 🔓 Help bust Wopener out — the $99 Apple Tax
+
+Here's the honest part: **Wopener is unsigned and un-notarised** because notarising a Mac
+app requires the Apple Developer Program — **$99/year**, every year, forever. This is a
+free, open-source, Apache-2.0 weekend tool with exactly **$0** of funding behind it. I'd
+rather not put a paywall on a link picker, so right now *you* pay the price in
+right-click-Open gymnastics.
+
+**The quest:** crowd-fund the Apple Tax so every release ships notarised — no scary
+dialog, no `xattr` incantations, just double-click-and-go for everyone who comes after.
+
+| Tier | Unlocks |
+|------|---------|
+| ☕ **$1–9** | You bought a brick of the wall we're tearing down. Eternal gratitude + a warm fuzzy. |
+| 🔑 **$10+** | Your name in `SPONSORS.md` and the About pane — co-signers of freedom. |
+| 🪄 **$99 total** | **One full year of notarised releases.** Gatekeeper jail: demolished. |
+| 🛡️ **$99/yr recurring** | Notarisation on autopilot, forever. The wall never comes back. |
+
+> **[→ Sponsor and help notarise Wopener](https://github.com/sponsors/xkaper001)**
+
+Can't spare cash? Free ways to help that move the needle just as much:
+
+- ⭐ **Star the repo** — visibility is fuel.
+- 🐦 **Tell one person** who's tired of "open in the wrong browser." Word of mouth funds word of mouth.
+- 🏢 **Work somewhere with an Apple Developer account?** Notarising a third-party
+  open-source build costs *nothing* extra on an existing account — [open an issue](https://github.com/xkaper001/wopener/issues)
+  and let's talk about co-signing releases.
+
+Every dollar and every star gets Wopener closer to "just works." 🪄
 
 ## Usage
 

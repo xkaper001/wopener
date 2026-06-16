@@ -1,12 +1,14 @@
 ---
 import '../styles/global.css';
 
+import { TAGLINE } from '../site';
+
 interface Props {
   title?: string;
 }
 
 const { title = 'Wopener' } = Astro.props;
-const pageTitle = title === 'Wopener' ? 'Wopener - Your link, your choice' : `${title} - Wopener`;
+const pageTitle = title === 'Wopener' ? `Wopener - ${TAGLINE}` : `${title} - Wopener`;
 const description = 'A macOS default-browser interceptor. Click any link and a Liquid Glass picker lets you choose which browser opens it.';
 ---
 

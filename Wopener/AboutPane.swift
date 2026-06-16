@@ -15,8 +15,7 @@ struct AboutPane: View {
 
     private var version: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-        let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
-        return "Version \(v) (\(b))"
+        return "Version \(v)"
     }
 
     var body: some View {
@@ -37,7 +36,7 @@ struct AboutPane: View {
                 }
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Your link, your choice. 🪄")
+                    Text("The Web Opener Apple Forgot. 🪄")
                         .font(.system(size: 14, weight: .semibold))
                     Text(verbatim: blurb)
                         .font(.system(size: 12))

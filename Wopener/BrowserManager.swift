@@ -15,8 +15,10 @@ struct Browser: Identifiable, Hashable {
     let name: String        // browser name, or "Browser — Profile" for a profile variant
     let appURL: URL
     let profile: BrowserProfile?
+    let icon: NSImage
 
-    var icon: NSImage { NSWorkspace.shared.icon(forFile: appURL.path) }
+    static func == (lhs: Browser, rhs: Browser) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
 @MainActor
@@ -62,14 +64,16 @@ final class BrowserManager {
             let name = FileManager.default.displayName(atPath: appURL.path)
                 .replacingOccurrences(of: ".app", with: "")
 
+            let icon = NSWorkspace.shared.icon(forFile: appURL.path)
             let profiles = ProfileStore.profiles(forBundleID: bid)
             if profiles.isEmpty {
-                found.append(Browser(id: bid, bundleID: bid, name: name, appURL: appURL, profile: nil))
+                found.append(Browser(id: bid, bundleID: bid, name: name, appURL: appURL,
+                                     profile: nil, icon: icon))
             } else {
                 for profile in profiles {
                     found.append(Browser(id: "\(bid)::\(profile.directory)", bundleID: bid,
                                          name: "\(name) — \(profile.name)", appURL: appURL,
-                                         profile: profile))
+                                         profile: profile, icon: icon))
                 }
             }
         }

@@ -11,6 +11,25 @@ const steps = [
   'Confirm in the macOS dialog that appears.',
   'Click any link. The picker appears.',
 ];
+
+// First-launch Gatekeeper walkthrough. Drop the screenshots into
+// website/public/ at these paths and they appear automatically.
+const gatekeeperSteps = [
+  {
+    title: 'Right-click and choose Open',
+    body:
+      'Double-clicking shows a dead-end "can’t be opened" alert. Instead, right-click (or Control-click) Wopener in your Applications folder and choose Open.',
+    img: '/gatekeeper-open.png',
+    alt: 'Right-clicking Wopener in the Applications folder and choosing Open from the context menu.',
+  },
+  {
+    title: 'Click Open in the dialog',
+    body:
+      'The same warning appears, but this time with an Open button. Click it once — macOS remembers your choice and never asks again.',
+    img: '/gatekeeper-dialog.png',
+    alt: 'The macOS Gatekeeper dialog with an Open button that launches Wopener.',
+  },
+];
 ---
 
 <Layout title="Download">
@@ -28,10 +47,52 @@ const steps = [
         <CTAButton href={RELEASES_URL} variant="secondary" label="All releases" />
       </div>
       <p class="mt-4 text-sm text-ink-900/40">
-        {MIN_MACOS} or later. Not yet signed or notarized, so on first launch
-        macOS blocks it. Right-click the app, choose Open, then Open again, or
-        allow it in System Settings, Privacy and Security.
+        {MIN_MACOS} or later. Not yet notarized, so macOS blocks it on first
+        launch — the one-time fix is right below.
+        <a href="/#notarisation" class="underline underline-offset-2 hover:text-ink-900/70">Help change that.</a>
       </p>
+    </section>
+
+    <!-- First launch / Gatekeeper -->
+    <section class="w-full max-w-3xl pt-20 sm:pt-24">
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">First launch on macOS</h2>
+      <p class="mt-3 max-w-xl text-ink-900/55">
+        Wopener isn’t notarized yet (that costs $99/yr from Apple), so Gatekeeper
+        steps in the first time you open it. This is a one-time dance — do it once
+        and macOS never bothers you again.
+      </p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        {gatekeeperSteps.map((s, i) => (
+          <figure class="flex flex-col overflow-hidden rounded-2xl border border-black/10">
+            <img
+              src={s.img}
+              alt={s.alt}
+              class="aspect-[4/3] w-full bg-black/[0.03] object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption class="flex flex-1 flex-col gap-1.5 p-5">
+              <div class="flex items-center gap-3">
+                <span class="grid size-7 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold text-[#FFF0DF]">
+                  {i + 1}
+                </span>
+                <span class="font-semibold">{s.title}</span>
+              </div>
+              <p class="text-sm leading-snug text-ink-900/60">{s.body}</p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div class="mt-6 rounded-2xl border border-black/10 bg-black/[0.02] p-5 text-sm text-ink-900/65">
+        <p class="font-semibold text-ink-900/80">Prefer System Settings?</p>
+        <p class="mt-1">
+          Open Wopener once, then go to <span class="font-medium">System Settings ▸ Privacy &amp; Security</span>
+          and click <span class="font-medium">Open Anyway</span>. Or, from a terminal:
+        </p>
+        <pre class="mt-3 overflow-x-auto rounded-xl border border-[#FFF0DF]/10 bg-ink-950 px-4 py-3 font-mono text-xs text-[#FFF0DF]/85"><code>xattr -dr com.apple.quarantine /Applications/Wopener.app</code></pre>
+      </div>
     </section>
 
     <!-- Build from source -->

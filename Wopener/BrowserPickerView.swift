@@ -178,7 +178,7 @@ struct PickerOverlay: View {
                         .opacity(saved ? 1 : 0)
                 }
                 .frame(width: 56, height: 56)
-                .keyframeAnimator(initialValue: 1.0, trigger: saved) { content, scale in
+                .keyframeAnimator(initialValue: 1.0, trigger: saved) { [saved] content, scale in
                     content.scaleEffect(saved ? scale : 1)
                 } keyframes: { _ in
                     KeyframeTrack {
