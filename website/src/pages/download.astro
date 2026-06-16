@@ -19,14 +19,14 @@ const gatekeeperSteps = [
     title: 'Right-click and choose Open',
     body:
       'Double-clicking shows a dead-end "can’t be opened" alert. Instead, right-click (or Control-click) Wopener in your Applications folder and choose Open.',
-    img: '/gatekeeper-open.png',
+    img: '/gatekeeper-open.jpeg',
     alt: 'Right-clicking Wopener in the Applications folder and choosing Open from the context menu.',
   },
   {
     title: 'Click Open in the dialog',
     body:
       'The same warning appears, but this time with an Open button. Click it once — macOS remembers your choice and never asks again.',
-    img: '/gatekeeper-dialog.png',
+    img: '/gatekeeper-dialog.jpeg',
     alt: 'The macOS Gatekeeper dialog with an Open button that launches Wopener.',
   },
 ];
@@ -92,6 +92,13 @@ const gatekeeperSteps = [
           and click <span class="font-medium">Open Anyway</span>. Or, from a terminal:
         </p>
         <pre class="mt-3 overflow-x-auto rounded-xl border border-[#FFF0DF]/10 bg-ink-950 px-4 py-3 font-mono text-xs text-[#FFF0DF]/85"><code>xattr -dr com.apple.quarantine /Applications/Wopener.app</code></pre>
+        <img
+          src="/gatekeeper-3.jpeg"
+          alt="System Settings ▸ Privacy & Security showing the Open Anyway button for Wopener."
+          class="mt-4 w-full rounded-xl border border-black/10"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </section>
 
