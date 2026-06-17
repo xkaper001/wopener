@@ -2,7 +2,9 @@
 
 # Wopener
 
-**The Web Opener Apple Forgot.** 🪄
+**The Web Opener Apple Forgot.** 
+
+<img src="docs/assets/banner.png" alt="Wopener" width="640" />
 
 A macOS default-browser interceptor with a Liquid Glass picker. Set Wopener as your
 system default browser, and every link click pops a centered glass picker so *you*
@@ -10,7 +12,7 @@ decide which real browser opens it — no rules to babysit, no routing memory to
 second-guess.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-macOS%2026%2B-lightgrey.svg)](#requirements)
+[![Platform](https://img.shields.io/badge/platform-macOS%2026.5%2B-lightgrey.svg)](#requirements)
 [![Swift](https://img.shields.io/badge/Swift-5-orange.svg)](https://swift.org)
 
 </div>
@@ -23,6 +25,12 @@ macOS only lets you pick *one* default browser. If you use Chrome for work, Safa
 personal, and a private browser for the rest, every link is a wrong guess. Wopener
 becomes the default, intercepts the click, and shows a picker instead of committing for
 you.
+
+<div align="center">
+
+<img src="docs/assets/preview.png" alt="The Wopener picker over a link click" width="720" />
+
+</div>
 
 ## Features
 
@@ -39,12 +47,18 @@ you.
 - **Configurable picker** — choose where it anchors on screen (9 positions), where the
   URL chip sits, whether number hints show, and which key saves.
 - **Copy the link** — tap the detached URL chip to copy without opening anything.
+- **Lives in the menu bar** — Wopener runs as a background agent with no Dock icon. The
+  menu-bar icon opens the window, sets the default browser, or quits. The main window
+  only appears when you ask for it.
+- **Opens at login** — enabled by default via `SMAppService`, so Wopener is ready to
+  catch the first link after a restart. Toggle it off in the General tab or System
+  Settings ▸ Login Items.
 - **No routing memory by design** — Wopener never silently picks for you. The only
   persisted state is your browser order, toggles, saved links, and preferences.
 
 ## Requirements
 
-- macOS 26.5 or later
+- macOS 26.0 or later
 - Xcode 26+ (to build from source)
 
 ## Install
@@ -128,14 +142,18 @@ Manage everything from the main window's four tabs: **Saved**, **Browsers**,
 ## Architecture
 
 Swift 5, SwiftUI, `MainActor` default isolation. Unsandboxed, Developer ID / direct
-distribution. All source lives in `Wopener/`.
+distribution. Runs as a background agent (`LSUIElement`) — no Dock icon; the window flips
+activation policy to `.regular` while open and back to `.accessory` on close. All source
+lives in `Wopener/`.
 
 | File | Role |
 |------|------|
 | `WopenerApp.swift` | `@main`; single `Window` scene hosting `MainWindowView`. |
-| `AppDelegate.swift` | Installs the `kAEGetURL` Apple Event handler; routes URLs to the picker; suppresses the main window on link-triggered cold launch. |
+| `AppDelegate.swift` | Installs the `kAEGetURL` Apple Event handler; routes URLs to the picker; suppresses the main window on link-triggered cold launch; owns the menu-bar controller. |
+| `MenuBarController.swift` | The `NSStatusItem` and its menu (Open Wopener…, Set as Default Browser, Quit). |
+| `LoginItem.swift` | `SMAppService.mainApp` wrapper for the open-at-login toggle. |
 | `BrowserManager.swift` | `@Observable` singleton. Discovers http handlers, drops self, applies custom order & enabled toggles, opens URLs (optionally in a profile). |
-| `BrowserOrderStore.swift` | Persists the custom browser order in `UserDefaults`. |
+| `BrowserOrderStore.swift` | Persists the custom browser order and per-browser enabled toggles in `UserDefaults`. |
 | `ProfileStore.swift` | Reads Chromium `Local State` to discover per-profile launch dirs and account photos. |
 | `ProfileBadgeView.swift` | Circular profile badge (account photo or monogram). |
 | `PickerPosition.swift` | The 9 on-screen anchor positions for the picker. |
