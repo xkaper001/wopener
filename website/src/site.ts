@@ -2,6 +2,10 @@
 
 export const TAGLINE = "The Web Opener Apple Forgot";
 
+// Cloudflare Web Analytics beacon token (public, client-side). Empty = disabled.
+// Get it: Cloudflare dash → Analytics & Logs → Web Analytics → Add a site.
+export const CF_BEACON_TOKEN = ""; // paste token from CF dashboard
+
 // Direct .dmg download. GitHub keeps /releases/latest/download/<asset>
 export const DOWNLOAD_URL = "https://github.com/xkaper001/wopener/releases/latest/download/Wopener.dmg";
 

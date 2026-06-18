@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import { DOWNLOAD_URL, MIN_MACOS } from '../../site';
+---
+
+<Layout title="Downloading">
+  <Fragment slot="head">
+    <noscript>
+      <meta http-equiv="refresh" content={`0; url=${DOWNLOAD_URL}`} />
+    </noscript>
+  </Fragment>
+  <Header currentPath="/download" />
+
+  <main class="flex flex-1 flex-col items-center px-5">
+    <section class="w-full max-w-2xl pt-32 text-center sm:pt-40">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
+        Your download is starting…
+      </h1>
+      <p class="mx-auto mt-5 max-w-md text-lg text-ink-900/60">
+        Wopener.dmg should begin downloading automatically. If it doesn’t, use
+        the button below.
+      </p>
+      <div class="mt-9 flex justify-center">
+        <CTAButton href={DOWNLOAD_URL} label="Download Wopener.dmg" />
+      </div>
+      <p class="mt-4 text-sm text-ink-900/40">
+        {MIN_MACOS} or later. First launch is blocked by macOS —
+        <a href="/download" class="underline underline-offset-2 hover:text-ink-900/70">
+          here’s the one-time fix.
+        </a>
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script is:inline define:vars={{ DOWNLOAD_URL }}>
+    setTimeout(() => {
+      window.location.href = DOWNLOAD_URL;
+    }, 600);
+  </script>
+</Layout>

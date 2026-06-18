@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CTAButton from '../components/CTAButton.astro';
-import { DOWNLOAD_URL, RELEASES_URL, REPO_URL, MIN_MACOS, LICENSE } from '../site';
+import { RELEASES_URL, REPO_URL, MIN_MACOS, LICENSE } from '../site';
 
 const steps = [
   'Open Wopener from your Applications folder.',
@@ -43,7 +43,7 @@ const gatekeeperSteps = [
         yourself.
       </p>
       <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <CTAButton href={DOWNLOAD_URL} label="Download for Mac" />
+        <CTAButton href="/download/thanks" label="Download for Mac" />
         <CTAButton href={RELEASES_URL} variant="secondary" label="All releases" />
       </div>
       <p class="mt-4 text-sm text-ink-900/40">
