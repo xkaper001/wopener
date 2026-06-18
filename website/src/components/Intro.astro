@@ -116,5 +116,11 @@
       tl.fromTo(title, { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'back.out(1.4)' }, '-=0.05');
     }
     tl.fromTo('.reveal', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out' }, title ? '-=0.45' : '<');
+
+    // 7 — the "built with" chip pops in last, after the reveal cascade
+    const chip = document.getElementById('introChip');
+    if (chip) {
+      tl.fromTo(chip, { autoAlpha: 0, y: 12, scale: 0.9 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' }, '-=0.2');
+    }
   }
 </script>
