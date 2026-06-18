@@ -4,7 +4,7 @@
 
 **The Web Opener Apple Forgot.** 
 
-<img src="docs/assets/banner.png" alt="Wopener" width="640" />
+<img src="docs/assets/banner.png" alt="Wopener" width="auto"/>
 
 A macOS default-browser interceptor with a Liquid Glass picker. Set Wopener as your
 system default browser, and every link click pops a centered glass picker so *you*
@@ -28,7 +28,7 @@ you.
 
 <div align="center">
 
-<img src="docs/assets/preview.png" alt="The Wopener picker over a link click" width="720" />
+<img src="docs/assets/preview.png" alt="The Wopener picker over a link click" width="auto" />
 
 </div>
 
