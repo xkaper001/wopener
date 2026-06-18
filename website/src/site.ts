@@ -2,9 +2,8 @@
 
 export const TAGLINE = "The Web Opener Apple Forgot";
 
-// TODO(denji): replace with the direct .dmg URL once hosted.
-// Falls back to the GitHub releases page until then.
-export const DOWNLOAD_URL = "https://github.com/xkaper001/wopener/releases/latest";
+// Direct .dmg download. GitHub keeps /releases/latest/download/<asset>
+export const DOWNLOAD_URL = "https://github.com/xkaper001/wopener/releases/latest/download/Wopener.dmg";
 
 export const REPO_URL = "https://github.com/xkaper001/wopener";
 export const RELEASES_URL = "https://github.com/xkaper001/wopener/releases";
