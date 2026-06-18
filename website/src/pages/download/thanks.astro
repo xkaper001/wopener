@@ -7,6 +7,11 @@ import { DOWNLOAD_URL, MIN_MACOS } from '../../site';
 ---
 
 <Layout title="Downloading">
+  <Fragment slot="head">
+    <noscript>
+      <meta http-equiv="refresh" content={`0; url=${DOWNLOAD_URL}`} />
+    </noscript>
+  </Fragment>
   <Header currentPath="/download" />
 
   <main class="flex flex-1 flex-col items-center px-5">
@@ -31,10 +36,6 @@ import { DOWNLOAD_URL, MIN_MACOS } from '../../site';
   </main>
 
   <Footer />
-
-  <noscript>
-    <meta http-equiv="refresh" content={`0; url=${DOWNLOAD_URL}`} />
-  </noscript>
 
   <script is:inline define:vars={{ DOWNLOAD_URL }}>
     setTimeout(() => {

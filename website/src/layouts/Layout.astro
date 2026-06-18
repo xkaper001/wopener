@@ -38,6 +38,7 @@ const description = 'A macOS default-browser interceptor. Click any link and a L
         data-cf-beacon={JSON.stringify({ token: CF_BEACON_TOKEN })}
       />
     )}
+    <slot name="head" />
   </head>
   <body class="font-sans text-ink-900 antialiased selection:bg-accent/30">
     <div class="flex min-h-[100dvh] flex-col overflow-x-clip">
