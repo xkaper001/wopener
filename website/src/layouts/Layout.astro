@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 
-import { TAGLINE } from '../site';
+import { TAGLINE, CF_BEACON_TOKEN } from '../site';
 
 interface Props {
   title?: string;
@@ -31,6 +31,13 @@ const description = 'A macOS default-browser interceptor. Click any link and a L
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>{pageTitle}</title>
+    {CF_BEACON_TOKEN && (
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={JSON.stringify({ token: CF_BEACON_TOKEN })}
+      />
+    )}
   </head>
   <body class="font-sans text-ink-900 antialiased selection:bg-accent/30">
     <div class="flex min-h-[100dvh] flex-col overflow-x-clip">
