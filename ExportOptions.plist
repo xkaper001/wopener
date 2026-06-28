@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Developer ID export for direct (non-App-Store) notarized distribution.
+  Used by .github/workflows/release.yml during `xcodebuild -exportArchive`.
+  The signing certificate must be present in the build keychain (imported from
+  the DEVELOPER_ID_CERT_P12_BASE64 secret). Notarization happens after export
+  via `xcrun notarytool` in the workflow.
+-->
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>developer-id</string>
+	<key>teamID</key>
+	<string>477V8AD7PH</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>signingCertificate</key>
+	<string>Developer ID Application</string>
+</dict>
+</plist>

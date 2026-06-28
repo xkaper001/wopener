@@ -4,7 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CTAButton from '../components/CTAButton.astro';
 import Intro from '../components/Intro.astro';
-import { MIN_MACOS, REPO_URL, SPONSOR_URL, NOTARY_GOAL, NOTARY_RAISED } from '../site';
+import { MIN_MACOS, REPO_URL, SPONSOR_URL, NOTARY_GOAL, NOTARY_RAISED, KIMCHI_URL, KIMCHI_LOGO } from '../site';
 
 const fundPct = Math.min(100, Math.round((NOTARY_RAISED / NOTARY_GOAL) * 100));
 const fundDone = NOTARY_RAISED >= NOTARY_GOAL;
@@ -197,31 +197,29 @@ const features = [
         </div>
 
         <h2 class="text-3xl font-bold tracking-tight sm:text-5xl">
-          {fundDone ? 'Notarised. Just double-click.' : 'Help unlock notarised Wopener'}
+          The Apple Tax — covered by Kimchi.
         </h2>
         <p class="mx-auto mt-4 max-w-md text-base text-ink-900/55 sm:text-lg">
-          {fundDone
-            ? 'The community cleared the $99 Apple Tax — releases now open without the Gatekeeper warning.'
-            : "Wopener is unsigned because notarising costs $99/yr from Apple. Chip in and every release opens clean — no scary dialog, no right-click dance."}
+          Notarising costs $99/yr from Apple. <a href={KIMCHI_URL} target="_blank" rel="noopener noreferrer" class="font-medium text-ink-900 underline underline-offset-2">Kimchi</a> sponsored the
+          Apple Developer Program, so notarised — double-click-to-open — builds are on
+          the way. Until they ship, the one-time Gatekeeper steps still apply.
         </p>
 
-        <!-- progress bar -->
-        <div class="reveal mt-9 w-full max-w-md" style="--reveal-delay: 150ms">
-          <div class="mb-2.5 flex items-baseline justify-between text-sm font-medium">
-            <span class="text-ink-900">${NOTARY_RAISED} raised</span>
-            <span class="text-ink-900/45">goal ${NOTARY_GOAL} · the Apple Tax</span>
-          </div>
-          <div class="fund-track h-3 w-full overflow-hidden rounded-full bg-ink-900/10">
-            <div class="fund-fill h-full rounded-full bg-accent" style={`--pct:${fundPct}%`}></div>
-          </div>
-          <p class="mt-2 text-right text-xs text-ink-900/40">{fundPct}% of the way out of Gatekeeper jail</p>
-        </div>
+        <!-- sponsor credit -->
+        <a
+          href={KIMCHI_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="reveal mt-9 inline-flex items-center gap-3 rounded-2xl border border-black/10 bg-white/60 px-6 py-4 shadow-sm backdrop-blur transition hover:shadow-md"
+          style="--reveal-delay: 150ms"
+        >
+          <span class="text-xs font-medium uppercase tracking-wide text-ink-900/45">Sponsored by</span>
+          <img src={KIMCHI_LOGO} alt="Kimchi" class="h-6 w-auto" />
+        </a>
 
-        {!fundDone && (
-          <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <CTAButton href={SPONSOR_URL} label="Sponsor the notarisation" />
-          </div>
-        )}
+        <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+          <CTAButton href={SPONSOR_URL} variant="secondary" label="Sponsor ongoing notarisation" />
+        </div>
       </div>
     </section>
 

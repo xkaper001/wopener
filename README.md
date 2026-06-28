@@ -97,13 +97,17 @@ You only do this once. Building from source skips it entirely — you sign local
 
 ## 🔓 Help bust Wopener out — the $99 Apple Tax
 
-Here's the honest part: **Wopener is unsigned and un-notarised** because notarising a Mac
-app requires the Apple Developer Program — **$99/year**, every year, forever. This is a
-free, open-source, Apache-2.0 weekend tool with exactly **$0** of funding behind it. I'd
-rather not put a paywall on a link picker, so right now *you* pay the price in
-right-click-Open gymnastics.
+> ✅ **Update:** **[Kimchi](https://tr.ee/lpzVfB)** sponsored the Apple Developer
+> Program — the first year of the Apple Tax is **covered**. Notarised, double-click-to-open
+> releases are on the way. The Gatekeeper steps above still apply until those ship.
 
-**The quest:** crowd-fund the Apple Tax so every release ships notarised — no scary
+Here's the honest part: **Wopener is currently unsigned and un-notarised** because
+notarising a Mac app requires the Apple Developer Program — **$99/year**, every year,
+forever. This is a free, open-source, Apache-2.0 weekend tool, and thanks to **Kimchi**
+that wall is paid down for year one. Ongoing sponsorship keeps it paid so no scary dialog
+ever comes back.
+
+**The quest:** keep the Apple Tax funded so every release ships notarised — no scary
 dialog, no `xattr` incantations, just double-click-and-go for everyone who comes after.
 
 | Tier | Unlocks |
@@ -150,11 +154,16 @@ instructions, and gotchas.
 
 ## Sponsors
 
+Wopener is sponsored by **Kimchi**, who funded the Apple Developer Program so notarised,
+double-click-to-open releases can ship. Huge thanks. 💙
+
 <p align="center">
-  <a href="https://github.com/sponsors/xkaper001" aria-label="Go to xkaper's GitHub Sponsors page">
-    <img src='https://cdn.jsdelivr.net/gh/xkaper001/static/sponsors.svg'/>
+  <a href="https://tr.ee/lpzVfB" aria-label="Kimchi">
+    <img src="docs/assets/kimchi.png" alt="Kimchi" height="48" />
   </a>
 </p>
+
+Want your name here? [Become a sponsor →](https://github.com/sponsors/xkaper001)
 
 ## Contributing
 

@@ -1,0 +1,67 @@
+name: Bump Homebrew Cask
+
+# After a release is published, update the wopener cask in the xkaper001/homebrew-tap
+# repo with the new version and the DMG's sha256. Users then get the update via
+# `brew upgrade --cask wopener`.
+#
+# Required secret:
+#   HOMEBREW_TAP_TOKEN  a fine-grained PAT with contents:write on xkaper001/homebrew-tap
+
+on:
+  # Dormant until the Homebrew tap is set up. Re-enable the auto-trigger by
+  # uncommenting the lines below once xkaper001/homebrew-tap and the
+  # HOMEBREW_TAP_TOKEN secret exist (see docs/release.md).
+  # release:
+  #   types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 1.0.0)"
+        required: true
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve version
+        id: ver
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"   # release tag -> strip leading v
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "dmg=Wopener-$VERSION.dmg" >> "$GITHUB_OUTPUT"
+
+      - name: Download DMG and compute sha256
+        id: hash
+        run: |
+          URL="https://github.com/${{ github.repository }}/releases/download/v${{ steps.ver.outputs.version }}/${{ steps.ver.outputs.dmg }}"
+          curl -fL "$URL" -o release.dmg
+          echo "sha256=$(sha256sum release.dmg | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tap
+        uses: actions/checkout@v6
+        with:
+          repository: xkaper001/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap
+
+      - name: Update cask
+        run: |
+          CASK="tap/Casks/wopener.rb"
+          mkdir -p "tap/Casks"
+          sed -E -i \
+            -e "s/version \".*\"/version \"${{ steps.ver.outputs.version }}\"/" \
+            -e "s/sha256 \".*\"/sha256 \"${{ steps.hash.outputs.sha256 }}\"/" \
+            "$CASK"
+
+      - name: Commit and push
+        run: |
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/wopener.rb
+          git commit -m "wopener ${{ steps.ver.outputs.version }}" || { echo "no changes"; exit 0; }
+          git push

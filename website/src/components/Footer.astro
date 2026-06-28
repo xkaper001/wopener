@@ -1,5 +1,5 @@
 ---
-import { REPO_URL, LICENSE } from '../site';
+import { REPO_URL, LICENSE, KIMCHI_URL, KIMCHI_LOGO } from '../site';
 ---
 
 <footer class="relative mt-32 overflow-hidden px-6">
@@ -39,7 +39,17 @@ import { REPO_URL, LICENSE } from '../site';
       />
     </a>
 
-    <p class="mt-6 text-xs text-ink-900/35">
+    <a
+      href={KIMCHI_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-6 inline-flex items-center gap-2 text-xs text-ink-900/45 transition hover:text-ink-900"
+    >
+      <span>Sponsored by</span>
+      <img src={KIMCHI_LOGO} alt="Kimchi" class="h-4 w-auto" />
+    </a>
+
+    <p class="mt-4 text-xs text-ink-900/35">
       Built by xkaper with 💙
     </p>
   </div>

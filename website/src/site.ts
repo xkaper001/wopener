@@ -22,3 +22,5 @@ export const LICENSE = "Apache 2.0";
 export const SPONSOR_URL = "https://github.com/sponsors/xkaper001";
 export const NOTARY_GOAL = 99; // USD, one year of notarised releases
 export const NOTARY_RAISED = 0; // USD raised so far — bump me
+export const KIMCHI_URL = "https://tr.ee/lpzVfB";
+export const KIMCHI_LOGO = "/kimchi.png";
