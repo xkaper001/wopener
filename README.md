@@ -12,7 +12,7 @@ decide which real browser opens it — no rules to babysit, no routing memory to
 second-guess.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-macOS%2026.5%2B-lightgrey.svg)](#requirements)
+[![Platform](https://img.shields.io/badge/platform-macOS%2026%2B-lightgrey.svg)](#requirements)
 [![Swift](https://img.shields.io/badge/Swift-5-orange.svg)](https://swift.org)
 
 </div>
@@ -141,41 +141,26 @@ Manage everything from the main window's four tabs: **Saved**, **Browsers**,
 
 ## Architecture
 
-Swift 5, SwiftUI, `MainActor` default isolation. Unsandboxed, Developer ID / direct
-distribution. Runs as a background agent (`LSUIElement`) — no Dock icon; the window flips
-activation policy to `.regular` while open and back to `.accessory` on close. All source
-lives in `Wopener/`.
+Swift 5, SwiftUI, `MainActor` default isolation. Unsandboxed background agent
+(`LSUIElement`), Developer ID / direct distribution. All source lives in `Wopener/`; the
+picker UI is **glass-first** (`GlassEffectContainer` + `.glassEffect`).
 
-| File | Role |
-|------|------|
-| `WopenerApp.swift` | `@main`; single `Window` scene hosting `MainWindowView`. |
-| `AppDelegate.swift` | Installs the `kAEGetURL` Apple Event handler; routes URLs to the picker; suppresses the main window on link-triggered cold launch; owns the menu-bar controller. |
-| `MenuBarController.swift` | The `NSStatusItem` and its menu (Open Wopener…, Set as Default Browser, Quit). |
-| `LoginItem.swift` | `SMAppService.mainApp` wrapper for the open-at-login toggle. |
-| `BrowserManager.swift` | `@Observable` singleton. Discovers http handlers, drops self, applies custom order & enabled toggles, opens URLs (optionally in a profile). |
-| `BrowserOrderStore.swift` | Persists the custom browser order and per-browser enabled toggles in `UserDefaults`. |
-| `ProfileStore.swift` | Reads Chromium `Local State` to discover per-profile launch dirs and account photos. |
-| `ProfileBadgeView.swift` | Circular profile badge (account photo or monogram). |
-| `PickerPosition.swift` | The 9 on-screen anchor positions for the picker. |
-| `SavedLink.swift` | `SavedLink` model + `SavedLinksStore` (JSON in `UserDefaults`). |
-| `PickerWindowController.swift` | The borderless `NSPanel` mechanics — full-screen, pop-up-menu level, clear background. |
-| `BrowserPickerView.swift` | The picker UI — backdrop, URL chip, glass tile card, hover/keyboard selection. |
-| `MainWindowView.swift` | Sidebar-navigated main window. |
-| `SavedLinksPane.swift` · `BrowsersPane.swift` · `GeneralPane.swift` · `AboutPane.swift` | The four main-window tabs. |
+See **[`docs/architecture.md`](docs/architecture.md)** for the per-file breakdown, build
+instructions, and gotchas.
 
-The picker UI is **glass-first** — `GlassEffectContainer` + `.glassEffect`. Only
-`http`/`https` are intercepted (`CFBundleURLTypes` in `Info.plist`).
+## Sponsors
 
-> A `PBXFileSystemSynchronizedRootGroup` is active: new `.swift` files dropped into
-> `Wopener/` auto-compile — no `.pbxproj` edits needed.
+<p align="center">
+  <a href="https://github.com/sponsors/xkaper001" aria-label="Go to xkaper's GitHub Sponsors page">
+    <img src='https://cdn.jsdelivr.net/gh/xkaper001/static/sponsors.svg'/>
+  </a>
+</p>
 
 ## Contributing
 
 Issues and pull requests are welcome — come tinker. ✨ By contributing you agree your
-contributions are licensed under the project's Apache 2.0 license.
-
-There is no automated test target; verify changes by building, setting Wopener as the
-default browser, and clicking a link to confirm the picker behaves.
+contributions are licensed under the project's Apache 2.0 license. Build + verification
+notes live in [`docs/architecture.md`](docs/architecture.md).
 
 ## License
 
