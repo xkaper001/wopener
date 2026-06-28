@@ -5,6 +5,20 @@ All notable changes to Wopener are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-28
+
+### Changed
+- Releases are now Developer ID-signed, notarized, and stapled — no more
+  Gatekeeper "unidentified developer" warning on first launch.
+- App ships unsandboxed (Developer ID distribution), ensuring reliable link
+  interception and per-profile Chromium launches.
+
+### Added
+- Automated notarized-release pipeline (signed archive → notarize → DMG →
+  GitHub release) and dormant Homebrew-cask bump workflow.
+- Animated "built with kimchi" chip and Product Hunt badge in the website footer.
+- Architecture docs (`docs/architecture.md`), changelog, and expanded README.
+
 ## [1.0.0] - 2026-06-18
 
 First stable release.
@@ -29,5 +43,6 @@ First stable release.
 
 Initial release.
 
+[1.1.0]: https://github.com/xkaper001/wopener/releases/tag/v1.1.0
 [1.0.0]: https://github.com/xkaper001/wopener/releases/tag/v1.0.0
 [0.1.0]: https://github.com/xkaper001/wopener/releases/tag/v0.1.0
