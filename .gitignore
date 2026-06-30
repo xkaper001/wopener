@@ -1,7 +1,8 @@
-.kimchi/
+.kimchi/ferments/
 .vscode/
 .agents/
 archive/Alcove — Dynamic Island for your Mac.html
 archive/Alcove — Dynamic Island for your Mac.png
 .wrangler/cache/pages.json
 .wrangler/cache/wrangler-account.json
+build/
