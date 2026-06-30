@@ -19,6 +19,8 @@ env:
 jobs:
   release:
     runs-on: macos-26
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - uses: actions/checkout@v6
 
@@ -45,7 +47,6 @@ jobs:
           security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" -P "$CERT_PASSWORD" \
             -T /usr/bin/codesign -T /usr/bin/security
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
-          # Prepend our keychain to the search list so codesign finds the identity.
           security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | sed s/\"//g)
           rm "$RUNNER_TEMP/cert.p12"
 
@@ -110,3 +111,10 @@ jobs:
           files: ${{ steps.ver.outputs.dmg }}
           generate_release_notes: true
           fail_on_unmatched_files: true
+
+  bump-brew:
+    needs: release
+    uses: ./.github/workflows/brew-bump.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+    secrets: inherit
