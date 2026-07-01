@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SUPPORT_EMAIL } from '../site';
+
+const LAST_UPDATED = 'July 1, 2026';
+
+const sections = [
+  {
+    h: 'The short version',
+    p: 'Wopener collects nothing. There is no analytics, no accounts, no tracking, and no data sent anywhere. It runs entirely on your Mac.',
+  },
+  {
+    h: 'What stays on your Mac',
+    p: 'Your browser order and enable toggles, your saved-for-later links, and your picker preferences are stored locally in the app’s settings (UserDefaults) on your device. This data never leaves your Mac and is never transmitted to us or anyone else.',
+  },
+  {
+    h: 'Network activity',
+    p: 'The app makes no network requests to collect or report data. The only “network” activity is the ordinary act of opening a link: when you pick a browser, Wopener hands the URL to that browser, which then loads the page. Wopener itself never phones home.',
+  },
+  {
+    h: 'Sandboxing',
+    p: 'The Mac App Store build runs inside Apple’s App Sandbox, which limits the app’s access to your system to only what it needs to intercept and open links.',
+  },
+  {
+    h: 'Third parties and data sharing',
+    p: 'None. Wopener contains no third-party SDKs, no ad networks, and no analytics services. Nothing is shared, and nothing is sold — there is simply nothing to share.',
+  },
+  {
+    h: 'Children’s privacy',
+    p: 'Because Wopener collects no personal data from anyone, it collects no personal data from children.',
+  },
+  {
+    h: 'Changes to this policy',
+    p: 'If this policy ever changes, the updated version will be posted on this page with a new date above.',
+  },
+];
+---
+
+<Layout title="Privacy Policy">
+  <Header currentPath="/privacy" />
+
+  <main class="flex flex-1 flex-col items-center px-5">
+    <section class="w-full max-w-2xl pt-32 text-center sm:pt-40">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">Privacy Policy</h1>
+      <p class="mt-5 text-sm text-ink-900/45">Last updated {LAST_UPDATED}</p>
+    </section>
+
+    <section class="mt-12 w-full max-w-2xl space-y-8 pb-4">
+      {sections.map((item) => (
+        <div>
+          <h2 class="text-lg font-semibold sm:text-xl">{item.h}</h2>
+          <p class="mt-2 leading-relaxed text-ink-900/60">{item.p}</p>
+        </div>
+      ))}
+
+      <div>
+        <h2 class="text-lg font-semibold sm:text-xl">Contact</h2>
+        <p class="mt-2 leading-relaxed text-ink-900/60">
+          Questions about privacy? Email
+          <a
+            href={`mailto:${SUPPORT_EMAIL}`}
+            class="font-semibold text-ink-900 underline decoration-black/20 underline-offset-2 transition hover:decoration-black/60"
+          >{SUPPORT_EMAIL}</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
