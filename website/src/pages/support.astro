@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { REPO_URL, SUPPORT_EMAIL } from '../site';
+
+const routes = [
+  {
+    title: 'Check the FAQ',
+    body: 'Most questions — setting the default browser, profiles, saved links, Gatekeeper — are answered there. Start here.',
+    href: '/faq',
+    cta: 'Read the FAQ',
+    external: false,
+  },
+  {
+    title: 'Report a bug or request a feature',
+    body: 'Open an issue on GitHub. Include your macOS version and steps to reproduce, and it gets sorted out faster.',
+    href: `${REPO_URL}/issues`,
+    cta: 'Open an issue',
+    external: true,
+  },
+  {
+    title: 'Email',
+    body: 'Prefer email, or have something private? Reach out directly. Replies are best-effort — this is an open-source project.',
+    href: `mailto:${SUPPORT_EMAIL}`,
+    cta: SUPPORT_EMAIL,
+    external: false,
+  },
+];
+---
+
+<Layout title="Support">
+  <Header currentPath="/support" />
+
+  <main class="flex flex-1 flex-col items-center px-5">
+    <section class="w-full max-w-2xl pt-32 text-center sm:pt-40">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">Support</h1>
+      <p class="mt-5 text-lg text-ink-900/60">Need a hand with Wopener? Here's how to get it.</p>
+    </section>
+
+    <section class="mt-12 w-full max-w-2xl">
+      <div class="divide-y divide-black/10 border-y border-black/10">
+        {routes.map((item) => (
+          <div class="px-6 py-6">
+            <h2 class="text-base font-semibold sm:text-lg">{item.title}</h2>
+            <p class="mt-2 leading-relaxed text-ink-900/60">{item.body}</p>
+            <a
+              href={item.href}
+              class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-900 transition hover:opacity-70"
+              {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {item.cta}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

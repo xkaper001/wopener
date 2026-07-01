@@ -10,6 +10,7 @@ export const CF_BEACON_TOKEN = ""; // paste token from CF dashboard
 export const DOWNLOAD_URL = "https://github.com/xkaper001/wopener/releases/latest/download/Wopener.dmg";
 
 export const REPO_URL = "https://github.com/xkaper001/wopener";
+export const SUPPORT_EMAIL = "wopener@xkaper.dev";
 export const RELEASES_URL = "https://github.com/xkaper001/wopener/releases";
 
 export const MIN_MACOS = "macOS 26.0";
